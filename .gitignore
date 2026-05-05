@@ -1,0 +1,31 @@
+# Backup folders
+backup_*/
+*_backup/
+*.bak
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PHP / Composer
+vendor/
+composer.lock
+
+# Avatar uploads do người dùng (giữ thư mục nhưng bỏ ảnh upload)
+giaodien/duaan1-giaodien/mvc-oop-basic/uploads/avatar_*
+
+# Cache & tạm
+*.cache
+*.tmp
+tmp/
