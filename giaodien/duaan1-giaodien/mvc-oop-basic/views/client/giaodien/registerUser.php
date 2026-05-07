@@ -42,7 +42,7 @@
             </div>
             <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
                 <small class="text-dark">Số điện thoại:</small>
-                <a href="#" class="text-muted ms-1">0967807956</a>
+                <a href="#" class="text-muted ms-1">0866914326</a>
             </div>
             <div class="col-lg-4 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
@@ -100,7 +100,7 @@
                             <a href="#" class="nav-item nav-link active">Đăng ký</a>
                         </div>
                         <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3">
-                            <i class="fa fa-mobile-alt me-2"></i>0967807956
+                            <i class="fa fa-mobile-alt me-2"></i>0866914326
                         </a>
                     </div>
                 </nav>

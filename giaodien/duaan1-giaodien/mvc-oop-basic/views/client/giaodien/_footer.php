@@ -34,7 +34,7 @@
                         </div>
                         <div>
                             <h4 class="text-white">Số điện thoại</h4>
-                            <p class="mb-2">0967807956</p>
+                            <p class="mb-2">0866914326</p>
                         </div>
                     </div>
                 </div>

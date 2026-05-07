@@ -354,7 +354,7 @@ require_once __DIR__ . '/_header.php';
                 </div>
                 <div class="hdtt-trust-item">
                     <div class="hdtt-trust-icon c4"><i class="fas fa-headset"></i></div>
-                    <div class="hdtt-trust-text"><strong>Hỗ trợ 24/7</strong><small>Hotline 0967807956</small></div>
+                    <div class="hdtt-trust-text"><strong>Hỗ trợ 24/7</strong><small>Hotline 0866914326</small></div>
                 </div>
             </div>
         </div>

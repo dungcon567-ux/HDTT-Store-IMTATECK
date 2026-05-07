@@ -284,7 +284,7 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
                 <small class="text-dark">Hotline:</small>
-                <span class="text-muted ms-2">0967807956</span>
+                <span class="text-muted ms-2">0866914326</span>
             </div>
 
             <div class="col-lg-4 text-center text-lg-end">
@@ -522,8 +522,8 @@ $__avatarUrl  = $__avatarFile
                             <?php endif; ?>
                         </div>
 
-                        <a href="tel:0967807956" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i
-                                class="fa fa-mobile-alt me-2"></i> 0967807956</a>
+                        <a href="tel:0866914326" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i
+                                class="fa fa-mobile-alt me-2"></i> 0866914326</a>
                     </div>
                 </nav>
             </div>
