@@ -110,9 +110,9 @@ class User
         ]);
     }
 
-    public function login(string $username, string $password): array|false
+    public function login(string $email, string $password): array|false
     {
-        $user = $this->findByUsername($username);
+        $user = $this->findByEmail($email);
 
         if (!$user) {
             return false;

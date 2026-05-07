@@ -1,252 +1,306 @@
 <?php
-$gates = [
-    'momo'    => ['name' => 'MoMo',    'color' => '#a50064', 'color2' => '#d82d8b', 'logo' => 'M', 'icon' => null,           'tagline' => 'Quét QR bằng app MoMo'],
-    'zalopay' => ['name' => 'ZaloPay', 'color' => '#0068ff', 'color2' => '#00b9ff', 'logo' => 'Z', 'icon' => null,           'tagline' => 'Quét QR bằng app ZaloPay hoặc ngân hàng'],
-    'vnpay'   => ['name' => 'VNPay',   'color' => '#005baa', 'color2' => '#00a4e4', 'logo' => null,'icon' => 'fa-credit-card','tagline' => 'Quét QR NAPAS 247 bằng app ngân hàng'],
-];
-$g = $gates[$order['payment_method']] ?? $gates['momo'];
+$pageTitle = 'Thanh toán đơn hàng #' . $order['id'];
+$activeNav = 'orders';
+require_once __DIR__ . '/_header.php';
 
-// Thông tin tài khoản nhận
-$accountName    = 'DO VIET DUNG';
-$accountNoFull  = 'PSP2604910500000353';
-$accountNoMask  = '*******353';
-$transferNote   = 'HDTT' . $order['id'];
-$amount         = (int)$order['total'];
-
-// Chọn nguồn QR theo cổng thanh toán
-$method = $order['payment_method'];
-
-$qrStaticPath = __DIR__ . '/../../../uploads/qr_zalopay.png';
-$hasZaloFile = file_exists($qrStaticPath);
-
-if ($method === 'zalopay' && $hasZaloFile) {
-    $qrImage = '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/qr_zalopay.png';
-} else {
-    // Fallback / mặc định: VietQR động (NAPAS 247 - app nào cũng quét được)
-    $qrImage = "https://img.vietqr.io/image/MOMO-{$accountNoFull}-compact2.png"
-             . '?amount=' . $amount
-             . '&addInfo=' . urlencode($transferNote)
-             . '&accountName=' . urlencode($accountName);
-}
+// Tính thời gian còn lại (server-side) để countdown không reset khi reload
+// Mốc: created_at của đơn + 30 phút (khớp vnp_ExpireDate)
+$payWindowSec = 30 * 60;
+$createdAt    = !empty($order['created_at']) ? strtotime($order['created_at']) : time();
+$expireTs     = $createdAt + $payWindowSec;
+$remainSec    = max(0, $expireTs - time());
+$isExpired    = $remainSec <= 0;
 ?>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Cổng thanh toán <?= htmlspecialchars($g['name']) ?></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        *{box-sizing:border-box}
-        body{
-            margin:0;font-family:'Manrope',sans-serif;
-            min-height:100vh;
-            background:linear-gradient(135deg,<?= $g['color'] ?>,<?= $g['color2'] ?>);
-            display:flex;align-items:center;justify-content:center;
-            padding:30px 20px;
-        }
-        .gateway{
-            width:100%;max-width:480px;
-            background:#fff;border-radius:24px;
-            box-shadow:0 20px 60px rgba(0,0,0,.3);
-            overflow:hidden;
-            animation:slideUp .5s ease;
-        }
-        @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-        .gateway-head{
-            background:linear-gradient(135deg,<?= $g['color'] ?>,<?= $g['color2'] ?>);
-            color:#fff;padding:22px;text-align:center;
-        }
-        .logo-box{
-            width:60px;height:60px;border-radius:14px;
-            background:rgba(255,255,255,.18);
-            display:inline-flex;align-items:center;justify-content:center;
-            font-size:26px;font-weight:800;margin-bottom:8px;
-            backdrop-filter:blur(10px);
-        }
-        .gateway-head h2{margin:6px 0 4px;font-size:20px;font-weight:800}
-        .gateway-head p{margin:0;opacity:.92;font-size:12.5px}
-        .countdown{
-            display:inline-flex;align-items:center;gap:6px;
-            margin-top:10px;background:rgba(255,255,255,.2);
-            padding:5px 12px;border-radius:999px;font-size:12.5px;font-weight:600;
-        }
-        .gateway-body{padding:22px}
-        .qr-real{
-            margin:0 auto;width:240px;height:240px;
-            border:3px solid #fff;border-radius:18px;
-            box-shadow:0 6px 20px rgba(0,0,0,.08);
-            background:#fff;padding:8px;display:flex;align-items:center;justify-content:center;
-        }
-        .qr-real img{width:100%;height:100%;object-fit:contain;border-radius:8px}
-        .qr-fallback{
-            width:100%;height:100%;
-            background:repeating-linear-gradient(45deg,#fff,#fff 8px,#f3f4f6 8px,#f3f4f6 16px);
-            display:flex;flex-direction:column;align-items:center;justify-content:center;
-            border-radius:8px;color:#94a3b8;font-size:11px;text-align:center;padding:10px;
-        }
-        .qr-fallback i{font-size:50px;color:<?= $g['color'] ?>;opacity:.6;margin-bottom:6px}
 
-        .partners{
-            display:flex;align-items:center;justify-content:center;gap:14px;
-            margin:14px 0 6px;opacity:.85;
-        }
-        .partners img{height:18px}
-        .partners .sep{width:1px;height:14px;background:#e5e7eb}
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root{
+        --ed-cream:#F5F1EA;--ed-cream-2:#FBF6ED;--ed-cream-3:#F5E9D8;
+        --ed-paper:#FFFEFB;--ed-ink:#2A1F14;--ed-ink-soft:#5C4A33;
+        --ed-rust:#C2410C;--ed-mustard:#CA8A04;--ed-cocoa:#94715A;
+        --vnp-blue:#005baa;--vnp-blue-2:#00a4e4;
+    }
+    body{background:var(--ed-cream)!important;color:var(--ed-ink)!important;font-family:'Inter',system-ui,sans-serif!important}
 
-        .acct-info{
-            background:linear-gradient(135deg,#fff7f9,#ffe4ec);
-            border:1px solid #fbcfe8;
-            border-radius:14px;padding:14px;margin-top:8px;
-        }
-        .acct-info .name{font-weight:800;font-size:15px;color:#831843;margin-bottom:2px}
-        .acct-info .stk{font-size:13px;color:#9d174d;font-family:monospace;letter-spacing:1px}
+    .pay-wrap{max-width:1000px;margin:0 auto;padding:50px 20px}
+    .pay-head{margin-bottom:32px;text-align:center}
+    .pay-eyebrow{
+        display:inline-flex;align-items:center;gap:8px;
+        padding:6px 14px;border-radius:999px;
+        background:var(--ed-ink);color:var(--ed-cream-2);
+        font-size:11.5px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;
+    }
+    .pay-title{font-family:'Fraunces',serif;font-style:italic;font-weight:900;font-size:42px;letter-spacing:-1px;color:var(--ed-ink);margin:0}
+    .pay-title span{color:var(--ed-rust)}
+    .pay-sub{font-family:'Fraunces',serif;font-style:italic;color:var(--ed-ink-soft);margin-top:6px;font-size:15px}
 
-        .order-summary{
-            margin-top:14px;background:#f8fafc;border-radius:14px;padding:14px;
-        }
-        .row-line{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:#475569}
-        .row-line:last-child{margin-bottom:0}
-        .row-line strong{color:#0f172a}
-        .row-note{
-            background:#fef3c7;border:1px dashed #f59e0b;border-radius:10px;
-            padding:10px;margin-top:10px;
-            font-size:12.5px;color:#92400e;
-        }
-        .row-note .copy-row{
-            display:flex;align-items:center;gap:8px;margin-top:6px;
-            background:#fff;border-radius:8px;padding:7px 10px;font-family:monospace;font-weight:700;color:#0f172a;
-        }
-        .copy-btn{
-            margin-left:auto;background:<?= $g['color'] ?>;color:#fff;border:0;
-            padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;
-        }
-        .total-line{
-            margin-top:8px;padding-top:8px;border-top:1px solid #e5e7eb;
-            font-size:17px;font-weight:800;
-        }
-        .total-line strong{color:<?= $g['color'] ?>}
+    .pay-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px}
+    @media(max-width:900px){.pay-grid{grid-template-columns:1fr}}
 
-        .btn-pay{
-            width:100%;margin-top:14px;
-            background:linear-gradient(135deg,<?= $g['color'] ?>,<?= $g['color2'] ?>);
-            color:#fff;border:0;
-            padding:13px;border-radius:12px;
-            font-size:14.5px;font-weight:700;cursor:pointer;
-            box-shadow:0 10px 24px rgba(0,0,0,.15);
-            transition:.2s;
-        }
-        .btn-pay:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(0,0,0,.22)}
-        .btn-cancel{
-            width:100%;margin-top:8px;
-            background:transparent;color:#64748b;border:1px solid #e5e7eb;
-            padding:10px;border-radius:12px;font-size:12.5px;font-weight:600;cursor:pointer;
-            transition:.2s;
-        }
-        .btn-cancel:hover{background:#f1f5f9;color:#0f172a}
-        .secure-line{margin-top:12px;text-align:center;color:#94a3b8;font-size:11px}
-        .secure-line i{color:<?= $g['color'] ?>}
-    </style>
-</head>
-<body>
+    .pay-section{
+        background:var(--ed-paper);border:1px solid rgba(42,31,20,.1);
+        border-radius:8px;overflow:hidden;
+    }
+    .pay-section-head{
+        padding:18px 24px;border-bottom:1px solid rgba(42,31,20,.08);background:var(--ed-cream-2);
+    }
+    .pay-section-head h3{
+        font-family:'Fraunces',serif;font-style:italic;font-weight:700;
+        font-size:20px;margin:0;color:var(--ed-ink);
+        display:flex;align-items:center;gap:10px;
+    }
+    .pay-section-head h3 i{color:var(--ed-rust)}
 
-<div class="gateway">
-    <div class="gateway-head">
-        <div class="logo-box">
-            <?php if (!empty($g['icon'])): ?>
-                <i class="fas <?= $g['icon'] ?>"></i>
+    .pay-section-body{padding:22px 24px}
+
+    /* Order summary */
+    .pay-row{
+        display:flex;justify-content:space-between;align-items:center;
+        padding:11px 0;border-bottom:1px dashed rgba(42,31,20,.1);
+        font-size:14px;color:var(--ed-ink-soft);
+    }
+    .pay-row:last-child{border-bottom:0}
+    .pay-row b{color:var(--ed-ink);font-weight:700}
+    .pay-total-row{
+        margin-top:8px;padding-top:14px;border-top:2px solid var(--ed-ink);
+        display:flex;justify-content:space-between;align-items:baseline;
+    }
+    .pay-total-label{font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--ed-ink);font-weight:700}
+    .pay-total-num{font-family:'Fraunces',serif;font-weight:900;font-size:30px;color:var(--ed-rust);letter-spacing:-1px}
+
+    /* Items list */
+    .pay-items{margin-top:18px}
+    .pay-item{
+        display:grid;grid-template-columns:60px 1fr auto;gap:12px;
+        padding:10px 0;border-bottom:1px dashed rgba(42,31,20,.08);align-items:center;
+    }
+    .pay-item:last-child{border-bottom:0}
+    .pay-item img{width:60px;height:60px;object-fit:cover;border-radius:6px;background:var(--ed-cream-2)}
+    .pay-item-name{font-size:13.5px;font-weight:600;color:var(--ed-ink);margin-bottom:2px;line-height:1.3}
+    .pay-item-meta{font-size:11.5px;color:var(--ed-cocoa)}
+    .pay-item-price{font-family:'Fraunces',serif;font-style:italic;font-weight:800;color:var(--ed-rust);font-size:14px;text-align:right}
+
+    /* VNPAY card */
+    .vnp-brand{
+        display:flex;align-items:center;gap:14px;
+        padding:18px;border-radius:8px;
+        background:linear-gradient(135deg,var(--vnp-blue) 0%,var(--vnp-blue-2) 100%);
+        color:#fff;margin-bottom:16px;
+    }
+    .vnp-brand-logo{
+        width:54px;height:54px;border-radius:10px;
+        background:rgba(255,255,255,.2);backdrop-filter:blur(10px);
+        display:flex;align-items:center;justify-content:center;
+        font-weight:900;font-size:22px;letter-spacing:-1px;flex-shrink:0;
+    }
+    .vnp-brand-info strong{display:block;font-size:18px;font-weight:800;letter-spacing:-.3px}
+    .vnp-brand-info small{display:block;font-size:12px;opacity:.92;margin-top:2px}
+
+    .pay-banks{
+        display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;
+        padding:14px;background:var(--ed-cream-2);border-radius:8px;border:1px dashed rgba(42,31,20,.12);
+    }
+    .pay-banks-label{
+        width:100%;font-size:11px;font-weight:700;letter-spacing:1px;color:var(--ed-cocoa);
+        text-transform:uppercase;margin-bottom:6px;
+    }
+    .pay-banks .bank{
+        padding:5px 11px;border-radius:4px;background:#fff;
+        font-size:11.5px;font-weight:700;color:var(--ed-ink);letter-spacing:.3px;
+        border:1px solid rgba(42,31,20,.08);
+    }
+
+    .vnp-btn{
+        width:100%;padding:16px;border:0;border-radius:6px;
+        background:linear-gradient(135deg,var(--vnp-blue),var(--vnp-blue-2));
+        color:#fff;font-size:13.5px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+        cursor:pointer;font-family:inherit;
+        display:inline-flex;align-items:center;justify-content:center;gap:10px;
+        box-shadow:0 12px 28px rgba(0,91,170,.3);transition:all .25s;
+    }
+    .vnp-btn:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(0,91,170,.45)}
+
+    .vnp-info{
+        margin-top:14px;padding:14px;
+        background:#FEF3C7;border:1px dashed #F59E0B;border-radius:8px;
+        font-size:12.5px;color:#92400E;line-height:1.5;
+    }
+    .vnp-info i{color:#D97706;margin-right:5px}
+    .vnp-info code{background:#FFFEFB;padding:1px 6px;border-radius:4px;font-size:11.5px;color:#92400E}
+
+    .vnp-secure{
+        text-align:center;margin-top:14px;padding-top:14px;border-top:1px dashed rgba(42,31,20,.1);
+        font-size:11.5px;color:var(--ed-cocoa);
+    }
+    .vnp-secure i{color:#10b981;margin-right:4px}
+
+    .pay-cancel{
+        display:inline-flex;align-items:center;gap:6px;
+        margin-top:14px;padding:9px 18px;border-radius:6px;
+        background:transparent;color:var(--ed-ink-soft);
+        border:1px solid rgba(42,31,20,.15);
+        font-size:12px;font-weight:600;letter-spacing:.5px;
+        text-decoration:none;transition:all .2s;
+    }
+    .pay-cancel:hover{background:var(--ed-cream-2);color:var(--ed-ink)}
+
+    .countdown-bar{
+        display:inline-flex;align-items:center;gap:6px;
+        padding:5px 12px;border-radius:999px;
+        background:#FEE2E2;color:#991B1B;
+        font-size:12px;font-weight:700;letter-spacing:.5px;
+        margin-top:10px;
+    }
+</style>
+
+<div class="pay-wrap">
+    <div class="pay-head">
+        <span class="pay-eyebrow"><i class="fas fa-credit-card"></i> Thanh toán an toàn</span>
+        <h1 class="pay-title">Hoàn tất <span>thanh toán</span></h1>
+        <p class="pay-sub">Đơn hàng #<?= (int)$order['id'] ?> · Cổng thanh toán VNPAY Sandbox</p>
+        <div class="countdown-bar" id="cdBar">
+            <i class="far fa-clock"></i>
+            <?php if ($isExpired): ?>
+                <span>Phiên thanh toán đã hết hạn — vui lòng đặt đơn mới</span>
             <?php else: ?>
-                <?= htmlspecialchars($g['logo']) ?>
+                Phiên thanh toán hết hạn sau <span id="cd"><?= sprintf('%02d:%02d', floor($remainSec / 60), $remainSec % 60) ?></span>
             <?php endif; ?>
-        </div>
-        <h2>Cổng thanh toán <?= htmlspecialchars($g['name']) ?></h2>
-        <p><?= htmlspecialchars($g['tagline']) ?></p>
-        <div class="countdown">
-            <i class="far fa-clock"></i> <span id="cd">15:00</span>
         </div>
     </div>
 
-    <div class="gateway-body">
-        <div class="qr-real">
-            <img src="<?= $qrImage ?>"
-                 alt="QR thanh toán"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-            <div class="qr-fallback" style="display:none">
-                <i class="fas fa-qrcode"></i>
-                <span>Không tải được QR<br>Vui lòng kiểm tra mạng</span>
+    <div class="pay-grid">
+        <!-- LEFT: Order summary -->
+        <div class="pay-section">
+            <div class="pay-section-head">
+                <h3><i class="fas fa-receipt"></i> Chi tiết đơn hàng #<?= (int)$order['id'] ?></h3>
             </div>
-        </div>
+            <div class="pay-section-body">
+                <div class="pay-row"><span><i class="fas fa-user me-2"></i>Người nhận</span><b><?= htmlspecialchars($order['receiver_name']) ?></b></div>
+                <div class="pay-row"><span><i class="fas fa-phone me-2"></i>Số điện thoại</span><b><?= htmlspecialchars($order['receiver_phone']) ?></b></div>
+                <div class="pay-row"><span><i class="fas fa-map-marker-alt me-2"></i>Địa chỉ</span><b style="text-align:right;max-width:60%"><?= htmlspecialchars($order['receiver_address']) ?></b></div>
 
-        <div class="partners">
-            <span style="font-weight:800;color:#a50064">momo</span>
-            <span class="sep"></span>
-            <span style="font-weight:800;color:#dc2626">VietQR</span>
-            <span class="sep"></span>
-            <span style="font-weight:800;color:#0068ff">napas 24/7</span>
-        </div>
-
-        <div class="acct-info">
-            <div class="name">ĐỖ VIẾT DŨNG</div>
-            <div class="stk">STK MoMo: <?= htmlspecialchars($accountNoMask) ?></div>
-        </div>
-
-        <div class="order-summary">
-            <div class="row-line"><span>Đơn hàng</span><strong>#<?= (int)$order['id'] ?></strong></div>
-            <div class="row-line"><span>Người nhận</span><strong><?= htmlspecialchars($order['receiver_name']) ?></strong></div>
-            <div class="row-line"><span>Phương thức</span><strong><?= htmlspecialchars($g['name']) ?></strong></div>
-            <div class="row-line total-line"><span>Số tiền</span><strong><?= number_format($order['total']) ?>đ</strong></div>
-
-            <div class="row-note">
-                <div><i class="fas fa-pen me-1"></i> <b>Nội dung chuyển khoản:</b></div>
-                <div class="copy-row">
-                    <span id="note"><?= htmlspecialchars($transferNote) ?></span>
-                    <button type="button" class="copy-btn" onclick="copyNote()">
-                        <i class="far fa-copy"></i> Copy
-                    </button>
+                <?php if (!empty($orderDetails)): ?>
+                <div class="pay-items">
+                    <?php foreach ($orderDetails as $it): ?>
+                        <div class="pay-item">
+                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($it['image']) ?>" alt="">
+                            <div>
+                                <div class="pay-item-name"><?= htmlspecialchars($it['product_name']) ?></div>
+                                <div class="pay-item-meta">
+                                    <?= htmlspecialchars($it['color_name'] ?? '') ?> · Size <?= htmlspecialchars($it['size_name'] ?? '') ?>
+                                    · SL <?= (int)$it['quantity'] ?>
+                                </div>
+                            </div>
+                            <div class="pay-item-price"><?= number_format($it['price'] * $it['quantity']) ?>đ</div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <div style="margin-top:6px;font-size:11px">Vui lòng ghi đúng nội dung này để hệ thống đối soát.</div>
+                <?php endif; ?>
+
+                <div class="pay-row" style="margin-top:14px"><span>Phí vận chuyển</span><b><?= number_format($order['shipping_fee']) ?>đ</b></div>
+
+                <div class="pay-total-row">
+                    <span class="pay-total-label">Tổng thanh toán</span>
+                    <span class="pay-total-num"><?= number_format($order['total']) ?>đ</span>
+                </div>
             </div>
         </div>
 
-        <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=payConfirm">
-            <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
-            <input type="hidden" name="action" value="success">
-            <button type="submit" class="btn-pay" onclick="return confirm('Bạn đã chuyển khoản thành công?')">
-                <i class="fas fa-check-circle me-2"></i> Tôi đã chuyển khoản
-            </button>
-        </form>
+        <!-- RIGHT: VNPAY -->
+        <div class="pay-section">
+            <div class="pay-section-head">
+                <h3><i class="fas fa-shield-alt"></i> Phương thức thanh toán</h3>
+            </div>
+            <div class="pay-section-body">
+                <div class="vnp-brand">
+                    <div class="vnp-brand-logo">VNP</div>
+                    <div class="vnp-brand-info">
+                        <strong>VNPAY</strong>
+                        <small>Cổng thanh toán điện tử</small>
+                    </div>
+                </div>
 
-        <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=payConfirm">
-            <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
-            <input type="hidden" name="action" value="cancel">
-            <button type="submit" class="btn-cancel">
-                <i class="fas fa-times me-1"></i> Hủy giao dịch
-            </button>
-        </form>
+                <div class="pay-banks">
+                    <span class="pay-banks-label">Hỗ trợ ngân hàng & ví</span>
+                    <span class="bank">VietcomBank</span>
+                    <span class="bank">VietinBank</span>
+                    <span class="bank">BIDV</span>
+                    <span class="bank">Agribank</span>
+                    <span class="bank">Techcombank</span>
+                    <span class="bank">VPBank</span>
+                    <span class="bank">MBBank</span>
+                    <span class="bank">ACB</span>
+                    <span class="bank">Visa/Master</span>
+                    <span class="bank">QR Pay</span>
+                </div>
 
-        <div class="secure-line">
-            <i class="fas fa-shield-alt"></i> Bảo mật bởi NAPAS 247 · Quét bằng MoMo / Banking app
+                <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=vnpayCreate">
+                    <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+                    <button type="submit" class="vnp-btn" id="vnpBtn" <?= $isExpired ? 'disabled' : '' ?>>
+                        <i class="fas fa-lock"></i>
+                        <?php if ($isExpired): ?>
+                            Phiên đã hết hạn
+                        <?php else: ?>
+                            Thanh toán <?= number_format($order['total']) ?>đ qua VNPAY
+                        <?php endif; ?>
+                    </button>
+                </form>
+
+                <div class="vnp-info">
+                    <i class="fas fa-info-circle"></i>
+                    <b>Môi trường Sandbox (test):</b> Khi vào trang VNPAY chọn <b>"Thẻ ATM nội địa - NCB"</b>, nhập:<br>
+                    Số thẻ: <code>9704198526191432198</code><br>
+                    Tên chủ thẻ: <code>NGUYEN VAN A</code><br>
+                    Ngày phát hành: <code>07/15</code> · OTP: <code>123456</code>
+                </div>
+
+                <div class="vnp-secure">
+                    <i class="fas fa-shield-alt"></i> Giao dịch bảo mật bởi VNPAY · Chữ ký HMAC-SHA512
+                </div>
+
+                <div style="text-align:center">
+                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="pay-cancel">
+                        <i class="fas fa-times"></i> Hủy giao dịch
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-function copyNote() {
-    const t = document.getElementById('note').innerText;
-    navigator.clipboard.writeText(t);
-    event.target.innerHTML = '<i class="fas fa-check"></i> Đã copy';
-    setTimeout(() => event.target.innerHTML = '<i class="far fa-copy"></i> Copy', 1500);
-}
-let secs = 15*60;
-const cd = document.getElementById('cd');
-setInterval(() => {
-    if (secs <= 0) { cd.textContent = 'Hết hạn'; return; }
-    secs--;
-    const m = String(Math.floor(secs/60)).padStart(2,'0');
-    const s = String(secs%60).padStart(2,'0');
-    cd.textContent = `${m}:${s}`;
-}, 1000);
+(function(){
+    // Anchor: thời điểm hết hạn từ server (Unix timestamp ms)
+    const expireMs = <?= $expireTs ?> * 1000;
+    const cd       = document.getElementById('cd');
+    const bar      = document.getElementById('cdBar');
+    const btn      = document.getElementById('vnpBtn');
+    if (!cd) return;
+    const tick = () => {
+        const remain = Math.max(0, Math.floor((expireMs - Date.now()) / 1000));
+        if (remain <= 0) {
+            bar.innerHTML = '<i class="far fa-clock"></i> Phiên thanh toán đã hết hạn — vui lòng đặt đơn mới';
+            bar.style.background = '#FEE2E2';
+            bar.style.color = '#991B1B';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Phiên đã hết hạn';
+            }
+            clearInterval(timerId);
+            return;
+        }
+        const m = String(Math.floor(remain / 60)).padStart(2, '0');
+        const s = String(remain % 60).padStart(2, '0');
+        cd.textContent = m + ':' + s;
+        // Khi còn dưới 5 phút, đổi cảnh báo sang đỏ
+        if (remain < 5 * 60) {
+            bar.style.background = '#FEE2E2';
+            bar.style.color = '#991B1B';
+        }
+    };
+    tick();
+    const timerId = setInterval(tick, 1000);
+})();
 </script>
-</body>
-</html>
+
+<?php require_once __DIR__ . '/_footer.php'; ?>

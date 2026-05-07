@@ -165,11 +165,13 @@ class HomeController
         $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = trim($_POST['username'] ?? '');
+            $email    = trim($_POST['email'] ?? '');
             $password = $_POST['password'] ?? '';
 
-            if ($username === '') {
-                $errors[] = "Username không được để trống.";
+            if ($email === '') {
+                $errors[] = "Email không được để trống.";
+            } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Email không hợp lệ.";
             }
 
             if ($password === '') {
@@ -178,14 +180,14 @@ class HomeController
 
             if (empty($errors)) {
                 $userModel = new User();
-                $user = $userModel->login($username, $password);
+                $user = $userModel->login($email, $password);
 
                 if ($user) {
                     session_regenerate_id(true);
 
                     $_SESSION['user_id'] = $user['id'];
-                    $_SESSION['user'] = $user['username'];
-                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['user']    = $user['username'];
+                    $_SESSION['role']    = $user['role'];
 
                     if ($user['role'] === 'admin') {
                         header("Location: index.php?act=adminProduct");
@@ -195,7 +197,7 @@ class HomeController
                     header("Location: index.php?act=giaodien");
                     exit;
                 } else {
-                    $error = "Sai tài khoản hoặc mật khẩu!";
+                    $error = "Email hoặc mật khẩu không đúng!";
                 }
             }
         }
@@ -245,6 +247,8 @@ class HomeController
                 $errors[] = "Mật khẩu không được để trống.";
             } elseif (strlen($password) < 6) {
                 $errors[] = "Mật khẩu phải có ít nhất 6 ký tự.";
+            } elseif (!preg_match('/[A-Za-z]/', $password) || !preg_match('/[0-9]/', $password)) {
+                $errors[] = "Mật khẩu phải có cả chữ và số.";
             }
 
             if (empty($errors)) {
@@ -540,16 +544,22 @@ class HomeController
             exit;
         }
 
+        $orderDetails = $productModel->getOrderDetails($orderId);
+
         require_once __DIR__ . '/../views/client/giaodien/payGateway.php';
     }
 
-    public function payConfirm()
+    /**
+     * Build URL VNPAY có chữ ký HMAC-SHA512, redirect khách sang sandbox VNPAY.
+     */
+    public function vnpayCreate()
     {
         $this->requireLogin();
 
-        $orderId = (int)($_POST['order_id'] ?? $_GET['order_id'] ?? 0);
-        $action  = $_POST['action'] ?? $_GET['action'] ?? '';
+        // Bắt buộc dùng giờ Việt Nam — VNPAY chỉ chấp nhận GMT+7
+        date_default_timezone_set('Asia/Ho_Chi_Minh');
 
+        $orderId = (int)($_POST['order_id'] ?? $_GET['order_id'] ?? 0);
         if ($orderId <= 0) {
             header("Location: index.php?act=myOrders");
             exit;
@@ -558,31 +568,156 @@ class HomeController
         $productModel = new Product();
         $order = $productModel->getOrderByIdAndUser($orderId, $_SESSION['user_id']);
 
-        if (!$order || $order['payment_method'] === 'cod') {
+        if (!$order || $order['payment_status'] === 'paid' || $order['payment_method'] === 'cod') {
             header("Location: index.php?act=myOrders");
             exit;
         }
 
-        if ($action === 'success') {
-            // Đánh dấu đã thanh toán đồng thời chuyển trạng thái đơn sang "đã đặt hàng"
-            $productModel->markOrderPaid($orderId);
-            $productModel->updateOrderStatusById($orderId, 'da_dat_hang');
+        // Build return URL động dựa vào host hiện tại (hoạt động trên localhost + ngrok)
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $returnUrl = $scheme . '://' . $_SERVER['HTTP_HOST']
+            . '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=vnpayReturn';
 
-            // Cập nhật lại biến $order để view hiển thị đúng
-            $order['payment_status'] = 'paid';
-            $order['status'] = 'da_dat_hang';
+        // Mã giao dịch duy nhất (order_id + 6 số cuối của timestamp)
+        $vnp_TxnRef = $orderId . '_' . substr(time(), -6);
 
-            require_once __DIR__ . '/../views/client/giaodien/payResult.php';
-            return;
+        $inputData = [
+            "vnp_Version"    => "2.1.0",
+            "vnp_TmnCode"    => VNPAY_TMN_CODE,
+            "vnp_Amount"     => (int)$order['total'] * 100, // VNPAY dùng đơn vị x100
+            "vnp_Command"    => "pay",
+            "vnp_CreateDate" => date('YmdHis'),
+            "vnp_CurrCode"   => "VND",
+            "vnp_IpAddr"     => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
+            "vnp_Locale"     => "vn",
+            "vnp_OrderInfo"  => "Thanh toan don hang #" . $orderId,
+            "vnp_OrderType"  => "other",
+            "vnp_ReturnUrl"  => $returnUrl,
+            "vnp_TxnRef"     => $vnp_TxnRef,
+            "vnp_ExpireDate" => date('YmdHis', strtotime('+30 minutes')),
+        ];
+
+        ksort($inputData);
+
+        $hashdata = '';
+        $query = '';
+        $i = 0;
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashdata .= '&' . urlencode($key) . '=' . urlencode($value);
+            } else {
+                $hashdata .= urlencode($key) . '=' . urlencode($value);
+                $i = 1;
+            }
+            $query .= urlencode($key) . '=' . urlencode($value) . '&';
         }
 
-        if ($action === 'cancel') {
-            $resultStatus = 'cancel';
-            require_once __DIR__ . '/../views/client/giaodien/payResult.php';
-            return;
+        $vnp_SecureHash = hash_hmac('sha512', $hashdata, VNPAY_HASH_SECRET);
+        $payUrl = VNPAY_URL . '?' . $query . 'vnp_SecureHash=' . $vnp_SecureHash;
+
+        header('Location: ' . $payUrl);
+        exit;
+    }
+
+    /**
+     * Nhận redirect từ VNPAY sau khi khách thanh toán xong.
+     * Verify chữ ký, kiểm tra responseCode, cập nhật DB, hiện trang kết quả.
+     */
+    public function vnpayReturn()
+    {
+        $this->requireLogin();
+
+        $inputData = [];
+        foreach ($_GET as $key => $value) {
+            if (substr($key, 0, 4) === "vnp_") {
+                $inputData[$key] = $value;
+            }
         }
 
-        header("Location: index.php?act=payGateway&order_id={$orderId}");
+        $vnp_SecureHash = $inputData['vnp_SecureHash'] ?? '';
+        unset($inputData['vnp_SecureHash']);
+        if (isset($inputData['vnp_SecureHashType'])) unset($inputData['vnp_SecureHashType']);
+        ksort($inputData);
+
+        $hashData = '';
+        $i = 0;
+        foreach ($inputData as $key => $value) {
+            if ($i == 1) {
+                $hashData .= '&' . urlencode($key) . '=' . urlencode($value);
+            } else {
+                $hashData .= urlencode($key) . '=' . urlencode($value);
+                $i = 1;
+            }
+        }
+        $secureHash = hash_hmac('sha512', $hashData, VNPAY_HASH_SECRET);
+
+        // Tách order_id từ vnp_TxnRef (format: orderId_xxxxxx)
+        $vnp_TxnRef = $_GET['vnp_TxnRef'] ?? '';
+        $orderId = (int)explode('_', $vnp_TxnRef)[0];
+
+        $productModel = new Product();
+        $order = $orderId > 0 ? $productModel->getOrderByIdAndUser($orderId, $_SESSION['user_id']) : null;
+
+        // Kết quả từ VNPAY
+        $vnp_ResponseCode = $_GET['vnp_ResponseCode'] ?? '';
+        $vnp_TransactionStatus = $_GET['vnp_TransactionStatus'] ?? '';
+        $vnp_Amount = (int)($_GET['vnp_Amount'] ?? 0) / 100;
+        $vnp_TransactionNo = $_GET['vnp_TransactionNo'] ?? '';
+        $vnp_BankCode = $_GET['vnp_BankCode'] ?? '';
+        $vnp_PayDate = $_GET['vnp_PayDate'] ?? '';
+
+        // Mặc định lỗi
+        $vnpResult = [
+            'success' => false,
+            'message' => 'Giao dịch không xác định',
+            'code'    => $vnp_ResponseCode,
+        ];
+
+        if (!$order) {
+            $vnpResult['message'] = 'Không tìm thấy đơn hàng tương ứng.';
+        } elseif ($secureHash !== $vnp_SecureHash) {
+            $vnpResult['message'] = 'Chữ ký không hợp lệ — giao dịch có thể đã bị giả mạo.';
+        } elseif ((int)$vnp_Amount !== (int)$order['total']) {
+            $vnpResult['message'] = 'Số tiền không khớp đơn hàng.';
+        } elseif ($vnp_ResponseCode === '00' && $vnp_TransactionStatus === '00') {
+            // Idempotent: chỉ update nếu chưa paid
+            if ($order['payment_status'] !== 'paid') {
+                $productModel->markOrderPaid($orderId);
+                $productModel->updateOrderStatusById($orderId, 'da_dat_hang');
+                $order['payment_status'] = 'paid';
+                $order['status']         = 'da_dat_hang';
+            }
+            $vnpResult['success'] = true;
+            $vnpResult['message'] = 'Thanh toán thành công qua VNPAY.';
+        } else {
+            $vnpResult['message'] = match ($vnp_ResponseCode) {
+                '07' => 'Trừ tiền thành công nhưng giao dịch bị nghi ngờ.',
+                '09' => 'Thẻ/TK chưa đăng ký dịch vụ Internet Banking.',
+                '10' => 'Xác thực thông tin thẻ/TK không đúng quá 3 lần.',
+                '11' => 'Đã hết hạn chờ thanh toán.',
+                '12' => 'Thẻ/TK bị khoá.',
+                '13' => 'Sai mật khẩu OTP.',
+                '24' => 'Khách hàng huỷ giao dịch.',
+                '51' => 'Tài khoản không đủ số dư.',
+                '65' => 'Tài khoản đã vượt quá hạn mức giao dịch trong ngày.',
+                '75' => 'Ngân hàng thanh toán đang bảo trì.',
+                '79' => 'Nhập sai mật khẩu thanh toán quá nhiều lần.',
+                '99' => 'Lỗi không xác định.',
+                default => 'Giao dịch thất bại (mã ' . $vnp_ResponseCode . ')',
+            };
+        }
+
+        require_once __DIR__ . '/../views/client/giaodien/payResult.php';
+    }
+
+    public function payConfirm()
+    {
+        // Giữ lại để tương thích ngược, redirect về vnpayReturn nếu có dữ liệu VNPAY
+        if (isset($_GET['vnp_ResponseCode'])) {
+            $this->vnpayReturn();
+            return;
+        }
+        header("Location: index.php?act=myOrders");
         exit;
     }
 

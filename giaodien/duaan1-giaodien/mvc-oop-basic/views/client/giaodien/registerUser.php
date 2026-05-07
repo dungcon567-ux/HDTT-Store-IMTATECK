@@ -108,110 +108,301 @@
         </div>
     </div>
 
-    <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Đăng ký</h1>
-        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
-            <li class="breadcrumb-item"><a href="index.php?act=giaodien">Trang chủ</a></li>
-            <li class="breadcrumb-item active text-white">Đăng ký</li>
-        </ol>
-    </div>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .auth-stage{
+            position:relative;min-height:calc(100vh - 60px);
+            background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 40%,#312e81 100%);
+            overflow:hidden;padding:60px 16px;
+            display:flex;align-items:center;justify-content:center;
+            font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+        }
+        .auth-stage::before,.auth-stage::after{
+            content:"";position:absolute;border-radius:50%;
+            filter:blur(80px);opacity:.55;pointer-events:none;
+            animation:authFloat 14s ease-in-out infinite;
+        }
+        .auth-stage::before{
+            width:520px;height:520px;left:-180px;top:-160px;
+            background:radial-gradient(circle,#8b5cf6 0%,#0f172a 70%);
+        }
+        .auth-stage::after{
+            width:480px;height:480px;right:-160px;bottom:-160px;
+            background:radial-gradient(circle,#ec4899 0%,#0f172a 70%);
+            animation-delay:-7s;
+        }
+        @keyframes authFloat{
+            0%,100%{transform:translate(0,0) scale(1)}
+            50%{transform:translate(30px,-25px) scale(1.08)}
+        }
+        .auth-blob{
+            position:absolute;width:360px;height:360px;border-radius:50%;
+            background:radial-gradient(circle,rgba(168,85,247,.4) 0%,rgba(168,85,247,0) 70%);
+            filter:blur(40px);pointer-events:none;
+            top:35%;left:50%;transform:translate(-50%,-50%);
+            animation:authPulse 6s ease-in-out infinite;
+        }
+        @keyframes authPulse{
+            0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}
+            50%{opacity:.7;transform:translate(-50%,-50%) scale(1.15)}
+        }
+        .auth-grid-bg{
+            position:absolute;inset:0;
+            background-image:
+                linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+            background-size:50px 50px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);
+            -webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);
+        }
 
-    <div class="container-fluid contact py-5">
-        <div class="container py-5">
-            <div class="p-5 bg-light rounded">
-                <div class="row g-4 justify-content-center">
-                    <div class="col-12">
-                        <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 900px;">
-                            <h4 class="text-primary border-bottom border-primary border-2 d-inline-block pb-2">Tạo tài khoản</h4>
-                            <p class="mb-2 fs-5 text-dark">Điền thông tin để đăng ký</p>
-                        </div>
-                    </div>
+        .auth-card{
+            position:relative;z-index:2;
+            width:100%;max-width:1040px;
+            background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
+            border:1px solid rgba(255,255,255,.15);
+            border-radius:24px;overflow:hidden;
+            box-shadow:0 30px 80px rgba(0,0,0,.5);
+            display:grid;grid-template-columns:1fr 1.25fr;
+            animation:authPop .6s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes authPop{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+        @media(max-width:840px){.auth-card{grid-template-columns:1fr}}
 
-                    <div class="col-lg-7">
-                        <?php if (!empty($errors)): ?>
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
-                                    <?php foreach ($errors as $item): ?>
-                                        <li><?= htmlspecialchars($item) ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        <?php endif; ?>
+        .auth-side{
+            position:relative;padding:48px 40px;
+            background:linear-gradient(140deg,#7c3aed 0%,#db2777 50%,#f59e0b 100%);
+            color:#fff;overflow:hidden;
+            display:flex;flex-direction:column;justify-content:space-between;
+            min-height:680px;
+        }
+        .auth-side::before{
+            content:"";position:absolute;width:300px;height:300px;border-radius:50%;
+            background:rgba(255,255,255,.1);top:-100px;right:-80px;filter:blur(40px);
+        }
+        .auth-side::after{
+            content:"";position:absolute;width:240px;height:240px;border-radius:50%;
+            background:rgba(252,211,77,.3);bottom:-80px;left:-60px;filter:blur(40px);
+        }
+        .auth-side-inner{position:relative;z-index:2}
+        .auth-brand{
+            display:inline-flex;align-items:center;gap:10px;
+            padding:8px 16px;border-radius:999px;
+            background:rgba(255,255,255,.18);backdrop-filter:blur(8px);
+            font-size:13px;font-weight:700;letter-spacing:1.5px;
+            margin-bottom:32px;
+        }
+        .auth-side h2{
+            font-size:36px;font-weight:800;line-height:1.15;margin:0 0 14px;
+            letter-spacing:-1px;
+        }
+        .auth-side h2 span{
+            background:linear-gradient(135deg,#fef3c7,#fde68a);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+        }
+        .auth-side p{font-size:14.5px;color:rgba(255,255,255,.92);line-height:1.65;margin:0 0 28px}
+        .auth-side ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px;position:relative;z-index:2}
+        .auth-side ul li{display:flex;align-items:center;gap:12px;font-size:13.5px;color:rgba(255,255,255,.95)}
+        .auth-side ul li i{
+            width:32px;height:32px;border-radius:10px;background:rgba(255,255,255,.22);
+            display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;
+        }
 
-                        <?php if (!empty($message)): ?>
-                            <div class="alert alert-info"><?= htmlspecialchars($message) ?></div>
-                        <?php endif; ?>
+        .auth-form-side{padding:42px 44px;background:#fff;color:#0f172a}
+        .auth-head{margin-bottom:24px}
+        .auth-head h3{font-size:28px;font-weight:800;margin:0 0 6px;letter-spacing:-.5px;color:#0f172a}
+        .auth-head p{color:#64748b;font-size:14px;margin:0}
 
-                        <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=registerUser">
-                            <div class="row g-4 wow fadeInUp" data-wow-delay="0.1s">
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="username" name="username" placeholder="Tên đăng nhập">
-                                        <label for="username">Tên đăng nhập</label>
-                                    </div>
-                                </div>
+        .auth-alert{
+            display:flex;gap:10px;padding:12px 14px;border-radius:12px;
+            background:#fef2f2;border:1px solid #fecaca;color:#991b1b;
+            font-size:13.5px;margin-bottom:18px;animation:shake .35s;
+        }
+        .auth-alert.info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+        .auth-alert.info i{color:#3b82f6}
+        .auth-alert i{flex-shrink:0;color:#dc2626;font-size:16px;margin-top:1px}
+        .auth-alert ul{margin:0;padding-left:16px}
+        @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="email" name="email" placeholder="Email">
-                                        <label for="email">Email</label>
-                                    </div>
-                                </div>
+        .auth-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+        @media(max-width:540px){.auth-grid{grid-template-columns:1fr}}
+        .auth-field{position:relative;margin-bottom:14px}
+        .auth-field.full{grid-column:1/-1}
+        .auth-field-label{display:block;font-size:12px;font-weight:600;color:#475569;margin-bottom:6px;letter-spacing:.3px}
+        .auth-input-wrap{position:relative}
+        .auth-input-wrap > i.fld-icon{
+            position:absolute;left:14px;top:50%;transform:translateY(-50%);
+            color:#94a3b8;font-size:14px;transition:color .2s;pointer-events:none;
+        }
+        .auth-input{
+            width:100%;padding:13px 14px 13px 42px;
+            background:#f8fafc;border:1.5px solid #e5e7eb;border-radius:12px;
+            font-size:14px;color:#0f172a;font-weight:500;font-family:inherit;
+            transition:all .2s;outline:none;
+        }
+        .auth-input::placeholder{color:#94a3b8;font-weight:400}
+        .auth-input:focus{background:#fff;border-color:#8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.12)}
+        .auth-input-wrap:focus-within > i.fld-icon{color:#8b5cf6}
+        .auth-toggle-pwd{
+            position:absolute;right:14px;top:50%;transform:translateY(-50%);
+            background:transparent;border:0;padding:6px;cursor:pointer;
+            color:#94a3b8;transition:color .2s;
+        }
+        .auth-toggle-pwd:hover{color:#8b5cf6}
 
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="std" name="std" placeholder="Số điện thoại">
-                                        <label for="std">Số điện thoại</label>
-                                    </div>
-                                </div>
+        .auth-strength{height:5px;background:#f1f5f9;border-radius:999px;overflow:hidden;margin-top:8px}
+        .auth-strength-bar{height:100%;width:0;border-radius:999px;transition:all .3s}
+        .auth-strength-text{display:block;font-size:11.5px;color:#94a3b8;margin-top:4px;font-weight:500}
 
-                                <div class="col-lg-12 col-xl-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="diachi" name="diachi" placeholder="Địa chỉ">
-                                        <label for="diachi">Địa chỉ</label>
-                                    </div>
-                                </div>
+        .auth-submit{
+            width:100%;padding:14px;border:0;border-radius:12px;
+            background:linear-gradient(135deg,#8b5cf6 0%,#ec4899 50%,#f59e0b 100%);
+            background-size:200% 200%;
+            color:#fff;font-size:15px;font-weight:700;letter-spacing:.4px;
+            cursor:pointer;position:relative;overflow:hidden;font-family:inherit;
+            box-shadow:0 12px 28px rgba(139,92,246,.4);
+            transition:transform .2s, box-shadow .2s, background-position .4s;
+            display:inline-flex;align-items:center;justify-content:center;gap:8px;
+            margin-top:6px;
+        }
+        .auth-submit:hover{
+            transform:translateY(-2px);
+            box-shadow:0 16px 36px rgba(139,92,246,.55);
+            background-position:100% 0;
+        }
+        .auth-submit::after{
+            content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;
+            background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);
+            transition:left .6s ease;
+        }
+        .auth-submit:hover::after{left:100%}
 
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <input type="password" class="form-control" id="password" name="password" placeholder="Mật khẩu">
-                                        <label for="password">Mật khẩu</label>
-                                    </div>
-                                </div>
+        .auth-divider{display:flex;align-items:center;gap:14px;margin:22px 0 16px;color:#cbd5e1;font-size:12px;font-weight:600;letter-spacing:1px}
+        .auth-divider::before,.auth-divider::after{content:"";flex:1;height:1px;background:#e5e7eb}
+        .auth-foot{text-align:center;font-size:14px;color:#64748b}
+        .auth-foot a{color:#8b5cf6;font-weight:700;text-decoration:none}
+        .auth-foot a:hover{text-decoration:underline}
 
-                                <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3">
-                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
-                                    </button>
-                                </div>
+        .auth-back{
+            position:absolute;top:24px;left:24px;z-index:5;
+            display:inline-flex;align-items:center;gap:8px;
+            padding:8px 14px;border-radius:999px;
+            background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,.15);
+            color:#fff;text-decoration:none;font-size:13px;font-weight:600;
+            transition:all .2s;
+        }
+        .auth-back:hover{background:rgba(255,255,255,.18);color:#fff;transform:translateX(-2px)}
 
-                                <div class="col-12 text-center">
-                                    <p class="mb-0">
-                                        Đã có tài khoản?
-                                        <a href="index.php?act=loginUser" class="text-primary">Đăng nhập</a>
-                                    </p>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+        .auth-terms{font-size:12px;color:#94a3b8;text-align:center;margin-top:14px;line-height:1.5}
+        .auth-terms a{color:#8b5cf6;text-decoration:none;font-weight:600}
+    </style>
 
-                    <div class="col-lg-5 wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="h-100 rounded d-flex align-items-center justify-content-center bg-white p-4">
-                            <div class="text-center">
-                                <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4 mx-auto"
-                                    style="width: 90px; height: 90px;">
-                                    <i class="fas fa-user-plus fa-2x text-primary"></i>
-                                </div>
-                                <h4 class="mb-3">Tham gia cùng HDTT Store</h4>
-                                <p class="mb-2">Tạo tài khoản để mua sắm dễ dàng hơn.</p>
-                                <p class="mb-0 text-muted">Sau khi đăng ký bạn có thể đăng nhập ngay bằng tài khoản vừa tạo.</p>
-                            </div>
-                        </div>
-                    </div>
+    <section class="auth-stage">
+        <div class="auth-grid-bg"></div>
+        <div class="auth-blob"></div>
+        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="auth-back">
+            <i class="fas fa-arrow-left"></i> Trang chủ
+        </a>
+
+        <div class="auth-card">
+            <!-- LEFT branding -->
+            <aside class="auth-side">
+                <div class="auth-side-inner">
+                    <span class="auth-brand"><i class="fas fa-shopping-bag"></i> HDTT STORE</span>
+                    <h2>Tham gia <span>cộng đồng</span> phong cách HDTT</h2>
+                    <p>Tạo tài khoản chỉ trong 30 giây — mở khoá hàng nghìn ưu đãi và trải nghiệm mua sắm dành riêng cho bạn.</p>
                 </div>
+                <ul>
+                    <li><i class="fas fa-gift"></i> Voucher chào mừng 50.000đ cho thành viên mới</li>
+                    <li><i class="fas fa-shipping-fast"></i> Miễn phí vận chuyển đơn đầu tiên</li>
+                    <li><i class="fas fa-percent"></i> Tích điểm — đổi quà — giảm giá độc quyền</li>
+                    <li><i class="fas fa-lock"></i> Bảo mật thông tin tuyệt đối</li>
+                </ul>
+            </aside>
+
+            <!-- RIGHT form -->
+            <div class="auth-form-side">
+                <div class="auth-head">
+                    <h3>Tạo tài khoản mới</h3>
+                    <p>Đã có tài khoản? <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=loginUser" style="color:#8b5cf6;font-weight:700;text-decoration:none">Đăng nhập tại đây</a></p>
+                </div>
+
+                <?php if (!empty($errors)): ?>
+                    <div class="auth-alert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <ul><?php foreach ($errors as $item): ?><li><?= htmlspecialchars($item) ?></li><?php endforeach; ?></ul>
+                    </div>
+                <?php endif; ?>
+                <?php if (!empty($message)): ?>
+                    <div class="auth-alert info">
+                        <i class="fas fa-info-circle"></i>
+                        <span><?= htmlspecialchars($message) ?></span>
+                    </div>
+                <?php endif; ?>
+
+                <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=registerUser" autocomplete="on">
+                    <div class="auth-grid">
+                        <div class="auth-field">
+                            <label class="auth-field-label" for="username">TÊN ĐĂNG NHẬP</label>
+                            <div class="auth-input-wrap">
+                                <input class="auth-input" type="text" id="username" name="username" placeholder="username" required>
+                                <i class="fas fa-user fld-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-field-label" for="email">EMAIL</label>
+                            <div class="auth-input-wrap">
+                                <input class="auth-input" type="email" id="email" name="email" placeholder="ban@email.com" required>
+                                <i class="fas fa-envelope fld-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-field-label" for="std">SỐ ĐIỆN THOẠI</label>
+                            <div class="auth-input-wrap">
+                                <input class="auth-input" type="tel" id="std" name="std" placeholder="0967xxxxxx" required>
+                                <i class="fas fa-phone fld-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-field-label" for="diachi">ĐỊA CHỈ</label>
+                            <div class="auth-input-wrap">
+                                <input class="auth-input" type="text" id="diachi" name="diachi" placeholder="Số nhà, đường, quận..." required>
+                                <i class="fas fa-map-marker-alt fld-icon"></i>
+                            </div>
+                        </div>
+
+                        <div class="auth-field full">
+                            <label class="auth-field-label" for="password">MẬT KHẨU</label>
+                            <div class="auth-input-wrap">
+                                <input class="auth-input" type="password" id="password" name="password"
+                                       placeholder="Tối thiểu 6 ký tự, có cả chữ và số" required style="padding-right:46px"
+                                       pattern="^(?=.*[A-Za-z])(?=.*[0-9]).{6,}$"
+                                       title="Mật khẩu phải có ít nhất 6 ký tự, chứa cả chữ và số"
+                                       oninput="(function(v){var bar=document.getElementById('pwBar');var txt=document.getElementById('pwTxt');var s=0;if(v.length>=6)s++;if(v.length>=10)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;var w=[0,20,40,60,80,100][s];var c=['#e5e7eb','#ef4444','#f59e0b','#eab308','#84cc16','#22c55e'][s];var t=['','Yếu','Trung bình','Khá','Mạnh','Rất mạnh'][s];bar.style.width=w+'%';bar.style.background=c;txt.textContent=t?'Độ mạnh: '+t:''})(this.value)">
+                                <i class="fas fa-lock fld-icon"></i>
+                                <button type="button" class="auth-toggle-pwd" onclick="(function(b){var i=b.parentNode.querySelector('input');var ic=b.querySelector('i');var s=i.type==='password';i.type=s?'text':'password';ic.className=s?'fas fa-eye-slash':'fas fa-eye';})(this)">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="auth-strength"><div class="auth-strength-bar" id="pwBar"></div></div>
+                            <small class="auth-strength-text" id="pwTxt"></small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-submit">
+                        <i class="fas fa-user-plus"></i> Tạo tài khoản
+                    </button>
+
+                    <p class="auth-terms">
+                        Bằng việc đăng ký, bạn đồng ý với <a href="#">Điều khoản dịch vụ</a> và <a href="#">Chính sách bảo mật</a> của HDTT Store.
+                    </p>
+                </form>
             </div>
         </div>
-     </div>
+    </section>
 
     <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
 

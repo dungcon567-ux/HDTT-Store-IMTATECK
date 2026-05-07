@@ -64,6 +64,14 @@ switch ($act) {
         (new HomeController())->payGateway();
         break;
 
+    case 'vnpayCreate':
+        (new HomeController())->vnpayCreate();
+        break;
+
+    case 'vnpayReturn':
+        (new HomeController())->vnpayReturn();
+        break;
+
     case 'payConfirm':
         (new HomeController())->payConfirm();
         break;
