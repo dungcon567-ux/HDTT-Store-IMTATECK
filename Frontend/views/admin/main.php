@@ -11,8 +11,8 @@ $pageActions = '<a href="?act=addProduct" class="btn-aurora"><i class="bi bi-plu
 
 require __DIR__ . '/_layout_header.php';
 
-require_once __DIR__ . '/../../models/Product.php';
-require_once __DIR__ . '/../../models/User.php';
+require_once __DIR__ . '/../../../Backend/models/Product.php';
+require_once __DIR__ . '/../../../Backend/models/User.php';
 
 try {
     $_pm = new Product();

@@ -7,7 +7,7 @@
     <title>Đăng ký - HDTT Store</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <base href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/views/client/giaodien/">
+    <base href="/Duan1/Frontend/views/client/giaodien/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -112,23 +112,26 @@
     <style>
         .auth-stage{
             position:relative;min-height:calc(100vh - 60px);
-            background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 40%,#312e81 100%);
+            background:
+              radial-gradient(circle at 80% 15%, #FFE4D6 0%, transparent 45%),
+              radial-gradient(circle at 15% 85%, #FFD7E1 0%, transparent 50%),
+              linear-gradient(135deg, #FFF5F0 0%, #FBE9DD 50%, #F5DCC9 100%);
             overflow:hidden;padding:60px 16px;
             display:flex;align-items:center;justify-content:center;
             font-family:'Plus Jakarta Sans',system-ui,sans-serif;
         }
         .auth-stage::before,.auth-stage::after{
             content:"";position:absolute;border-radius:50%;
-            filter:blur(80px);opacity:.55;pointer-events:none;
+            filter:blur(70px);pointer-events:none;
             animation:authFloat 14s ease-in-out infinite;
         }
         .auth-stage::before{
             width:520px;height:520px;left:-180px;top:-160px;
-            background:radial-gradient(circle,#8b5cf6 0%,#0f172a 70%);
+            background:radial-gradient(circle,rgba(244,114,182,.30) 0%,rgba(244,114,182,0) 70%);
         }
         .auth-stage::after{
             width:480px;height:480px;right:-160px;bottom:-160px;
-            background:radial-gradient(circle,#ec4899 0%,#0f172a 70%);
+            background:radial-gradient(circle,rgba(251,146,60,.32) 0%,rgba(251,146,60,0) 70%);
             animation-delay:-7s;
         }
         @keyframes authFloat{
@@ -137,31 +140,31 @@
         }
         .auth-blob{
             position:absolute;width:360px;height:360px;border-radius:50%;
-            background:radial-gradient(circle,rgba(168,85,247,.4) 0%,rgba(168,85,247,0) 70%);
+            background:radial-gradient(circle,rgba(217,70,239,.25) 0%,rgba(217,70,239,0) 70%);
             filter:blur(40px);pointer-events:none;
             top:35%;left:50%;transform:translate(-50%,-50%);
             animation:authPulse 6s ease-in-out infinite;
         }
         @keyframes authPulse{
-            0%,100%{opacity:.4;transform:translate(-50%,-50%) scale(1)}
+            0%,100%{opacity:.45;transform:translate(-50%,-50%) scale(1)}
             50%{opacity:.7;transform:translate(-50%,-50%) scale(1.15)}
         }
         .auth-grid-bg{
             position:absolute;inset:0;
             background-image:
-                linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
-                linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
-            background-size:50px 50px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);
-            -webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 75%);
+                linear-gradient(rgba(42,31,20,.05) 1px,transparent 1px),
+                linear-gradient(90deg,rgba(42,31,20,.05) 1px,transparent 1px);
+            background-size:50px 50px;mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
+            -webkit-mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%);
         }
 
         .auth-card{
             position:relative;z-index:2;
             width:100%;max-width:1040px;
-            background:rgba(255,255,255,.06);backdrop-filter:blur(20px);
-            border:1px solid rgba(255,255,255,.15);
+            background:#FFFEFB;
+            border:1px solid rgba(42,31,20,.08);
             border-radius:24px;overflow:hidden;
-            box-shadow:0 30px 80px rgba(0,0,0,.5);
+            box-shadow:0 30px 70px rgba(42,31,20,.15), 0 8px 24px rgba(42,31,20,.06);
             display:grid;grid-template-columns:1fr 1.25fr;
             animation:authPop .6s cubic-bezier(.16,1,.3,1);
         }
@@ -286,12 +289,13 @@
             position:absolute;top:24px;left:24px;z-index:5;
             display:inline-flex;align-items:center;gap:8px;
             padding:8px 14px;border-radius:999px;
-            background:rgba(255,255,255,.08);backdrop-filter:blur(8px);
-            border:1px solid rgba(255,255,255,.15);
-            color:#fff;text-decoration:none;font-size:13px;font-weight:600;
+            background:rgba(255,254,251,.85);backdrop-filter:blur(8px);
+            border:1px solid rgba(42,31,20,.1);
+            color:#2A1F14;text-decoration:none;font-size:13px;font-weight:600;
+            box-shadow:0 4px 12px rgba(42,31,20,.06);
             transition:all .2s;
         }
-        .auth-back:hover{background:rgba(255,255,255,.18);color:#fff;transform:translateX(-2px)}
+        .auth-back:hover{background:#FFFEFB;color:#C2410C;transform:translateX(-2px);box-shadow:0 6px 16px rgba(194,65,12,.15)}
 
         .auth-terms{font-size:12px;color:#94a3b8;text-align:center;margin-top:14px;line-height:1.5}
         .auth-terms a{color:#8b5cf6;text-decoration:none;font-weight:600}
@@ -300,7 +304,7 @@
     <section class="auth-stage">
         <div class="auth-grid-bg"></div>
         <div class="auth-blob"></div>
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="auth-back">
+        <a href="/Duan1/index.php?act=giaodien" class="auth-back">
             <i class="fas fa-arrow-left"></i> Trang chủ
         </a>
 
@@ -324,7 +328,7 @@
             <div class="auth-form-side">
                 <div class="auth-head">
                     <h3>Tạo tài khoản mới</h3>
-                    <p>Đã có tài khoản? <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=loginUser" style="color:#8b5cf6;font-weight:700;text-decoration:none">Đăng nhập tại đây</a></p>
+                    <p>Đã có tài khoản? <a href="/Duan1/index.php?act=loginUser" style="color:#8b5cf6;font-weight:700;text-decoration:none">Đăng nhập tại đây</a></p>
                 </div>
 
                 <?php if (!empty($errors)): ?>
@@ -340,7 +344,7 @@
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=registerUser" autocomplete="on">
+                <form method="POST" action="/Duan1/index.php?act=registerUser" autocomplete="on">
                     <div class="auth-grid">
                         <div class="auth-field">
                             <label class="auth-field-label" for="username">TÊN ĐĂNG NHẬP</label>

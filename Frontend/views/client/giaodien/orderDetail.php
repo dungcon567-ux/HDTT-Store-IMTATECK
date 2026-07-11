@@ -32,7 +32,7 @@ require_once __DIR__ . '/_header.php';
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-receipt me-2 text-primary"></i>Chi tiết đơn hàng #<?= $order['id'] ?></h2>
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
+        <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="fas fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
@@ -92,7 +92,7 @@ require_once __DIR__ . '/_header.php';
                                     <?php foreach ($orderDetails as $item): ?>
                                         <tr>
                                             <td>
-                                                <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                                <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
                                                      width="70" class="rounded">
                                             </td>
                                             <td><?= htmlspecialchars($item['product_name']) ?></td>

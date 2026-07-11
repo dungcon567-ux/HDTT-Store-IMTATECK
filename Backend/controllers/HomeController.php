@@ -76,7 +76,7 @@ class HomeController
 
         $topSellers = $productModel->getTopSellingProducts(8);
 
-        require_once __DIR__ . '/../views/client/giaodien/index.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/index.php';
     }
 
     public function detailProduct()
@@ -124,7 +124,7 @@ class HomeController
     // Bình luận
     $comments = $productModel->getCommentsByProduct($id);
 
-    require_once __DIR__ . '/../views/client/giaodien/detailProduct.php';
+    require_once __DIR__ . '/../../Frontend/views/client/giaodien/detailProduct.php';
     }
 
     public function addComment()
@@ -202,7 +202,7 @@ class HomeController
             }
         }
 
-        require_once __DIR__ . '/../views/client/giaodien/loginUser.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/loginUser.php';
     }
 
     public function registerUser()
@@ -264,7 +264,7 @@ class HomeController
             }
         }
 
-        require_once __DIR__ . '/../views/client/giaodien/registerUser.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/registerUser.php';
     }
 
     public function addToCart()
@@ -312,7 +312,7 @@ class HomeController
     $productModel = new Product();
     $cartItems = $productModel->getCartByUser($_SESSION['user_id']);
 
-    require_once __DIR__ . '/../views/client/giaodien/cart.php';
+    require_once __DIR__ . '/../../Frontend/views/client/giaodien/cart.php';
     }
 
     public function updateCart()
@@ -402,7 +402,7 @@ class HomeController
         $shippingFee = 30000;
         $grandTotal = $subTotal + $shippingFee;
 
-        require_once __DIR__ . '/../views/client/giaodien/checkout.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
     }
 
     public function placeOrder()
@@ -469,7 +469,7 @@ class HomeController
         $grandTotal = $subTotal + $shippingFee;
 
         if (!empty($errors)) {
-            require_once __DIR__ . '/../views/client/giaodien/checkout.php';
+            require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
             return;
         }
 
@@ -546,7 +546,7 @@ class HomeController
 
         $orderDetails = $productModel->getOrderDetails($orderId);
 
-        require_once __DIR__ . '/../views/client/giaodien/payGateway.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/payGateway.php';
     }
 
     /**
@@ -576,7 +576,7 @@ class HomeController
         // Build return URL động dựa vào host hiện tại (hoạt động trên localhost + ngrok)
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $returnUrl = $scheme . '://' . $_SERVER['HTTP_HOST']
-            . '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=vnpayReturn';
+            . '/Duan1/index.php?act=vnpayReturn';
 
         // Mã giao dịch duy nhất (order_id + 6 số cuối của timestamp)
         $vnp_TxnRef = $orderId . '_' . substr(time(), -6);
@@ -707,7 +707,7 @@ class HomeController
             };
         }
 
-        require_once __DIR__ . '/../views/client/giaodien/payResult.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/payResult.php';
     }
 
     public function payConfirm()
@@ -728,7 +728,7 @@ class HomeController
     $productModel = new Product();
     $orders = $productModel->getOrderHistoryByUser($_SESSION['user_id']);
 
-    require_once __DIR__ . '/../views/client/giaodien/myOrders.php';
+    require_once __DIR__ . '/../../Frontend/views/client/giaodien/myOrders.php';
     }
     public function confirmOrder()
     {
@@ -799,7 +799,7 @@ class HomeController
 
         $orderDetails = $productModel->getOrderDetails($orderId);
 
-        require_once __DIR__ . '/../views/client/giaodien/confirmOrder.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/confirmOrder.php';
     }
 
     public function wishlist()
@@ -809,7 +809,7 @@ class HomeController
         $productModel = new Product();
         $items = $productModel->getWishlistByUser($_SESSION['user_id']);
 
-        require_once __DIR__ . '/../views/client/giaodien/wishlist.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/wishlist.php';
     }
 
     public function toggleWishlist()
@@ -893,7 +893,7 @@ class HomeController
                     } else {
                         $safe = preg_replace('/[^a-zA-Z0-9_-]/', '', pathinfo($_FILES['avatar']['name'], PATHINFO_FILENAME));
                         $avatarName = 'avatar_' . $userId . '_' . time() . '_' . ($safe ?: 'img') . '.' . $ext;
-                        $uploadDir = __DIR__ . '/../uploads/';
+                        $uploadDir = __DIR__ . '/../../uploads/';
                         if (!move_uploaded_file($_FILES['avatar']['tmp_name'], $uploadDir . $avatarName)) {
                             $errors[] = "Tải ảnh thất bại.";
                             $avatarName = $user['avatar'];
@@ -946,7 +946,7 @@ class HomeController
             if ($o['payment_status'] === 'paid') $totalSpent += (int)$o['total'];
         }
 
-        require_once __DIR__ . '/../views/client/giaodien/profile.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/profile.php';
     }
 
     public function editReceiverInfo()
@@ -1018,7 +1018,7 @@ class HomeController
 
         $orderDetails = $productModel->getOrderDetails($orderId);
 
-        require_once __DIR__ . '/../views/client/giaodien/editReceiverInfo.php';
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/editReceiverInfo.php';
     }
 
     public function cancelOrder()
@@ -1154,6 +1154,6 @@ class HomeController
 
     $orderDetails = $productModel->getOrderDetails($orderId);
 
-    require_once __DIR__ . '/../views/client/giaodien/orderDetail.php';
+    require_once __DIR__ . '/../../Frontend/views/client/giaodien/orderDetail.php';
 }
 }

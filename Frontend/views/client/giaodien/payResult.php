@@ -177,17 +177,17 @@ if ($vnp_PayDate && strlen($vnp_PayDate) === 14) {
 
             <div class="res-actions">
                 <?php if ($success): ?>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=orderDetail&id=<?= (int)$order['id'] ?>" class="res-btn primary">
+                    <a href="/Duan1/index.php?act=orderDetail&id=<?= (int)$order['id'] ?>" class="res-btn primary">
                         <i class="fas fa-receipt"></i> Xem đơn
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="res-btn outline">
+                    <a href="/Duan1/index.php?act=giaodien" class="res-btn outline">
                         <i class="fas fa-shopping-bag"></i> Tiếp tục mua
                     </a>
                 <?php else: ?>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>" class="res-btn retry">
+                    <a href="/Duan1/index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>" class="res-btn retry">
                         <i class="fas fa-redo"></i> Thử lại
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="res-btn outline">
+                    <a href="/Duan1/index.php?act=myOrders" class="res-btn outline">
                         <i class="fas fa-box"></i> Đơn hàng của tôi
                     </a>
                 <?php endif; ?>

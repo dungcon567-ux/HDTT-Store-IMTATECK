@@ -19,7 +19,7 @@ foreach ($variants as $v) {
 
 $isFavorited = false;
 if (isset($_SESSION['user_id'])) {
-    require_once __DIR__ . '/../../../models/Product.php';
+    require_once __DIR__ . '/../../../../Backend/models/Product.php';
     $_pmw = new Product();
     $isFavorited = $_pmw->isInWishlist($_SESSION['user_id'], (int)$firstVariant['product_id']);
 }
@@ -299,9 +299,9 @@ if (isset($_SESSION['user_id'])) {
 
 <div class="pd-wrap">
     <nav class="pd-crumbs">
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien"><i class="fas fa-home"></i> Trang chủ</a>
+        <a href="/Duan1/index.php?act=giaodien"><i class="fas fa-home"></i> Trang chủ</a>
         <span class="sep">/</span>
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien">Sản phẩm</a>
+        <a href="/Duan1/index.php?act=giaodien">Sản phẩm</a>
         <span class="sep">/</span>
         <span class="current"><?= htmlspecialchars($firstVariant['product_name']) ?></span>
     </nav>
@@ -310,7 +310,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- LEFT: image -->
         <div class="pd-img-stage">
             <span class="pd-img-tag"><i class="fas fa-tag"></i> HDTT Store</span>
-            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
+            <img src="/Duan1/uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
                  class="pd-img"
                  alt="<?= htmlspecialchars($firstVariant['product_name']) ?>">
         </div>
@@ -354,7 +354,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-            <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=addToCart">
+            <form method="POST" action="/Duan1/index.php?act=addToCart">
                 <input type="hidden" name="product_id" value="<?= (int)$firstVariant['product_id'] ?>">
 
                 <div class="pd-field">
@@ -390,7 +390,7 @@ if (isset($_SESSION['user_id'])) {
                     <?php if ($hasStock): ?>
                         <button type="submit" class="pd-btn cart"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ</button>
                         <button type="submit" class="pd-btn buy"><i class="fas fa-bolt"></i> Mua ngay</button>
-                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=<?= isset($_SESSION['user_id']) ? 'toggleWishlist' : 'loginUser' ?>&id=<?= (int)$firstVariant['product_id'] ?>&back=detail"
+                        <a href="/Duan1/index.php?act=<?= isset($_SESSION['user_id']) ? 'toggleWishlist' : 'loginUser' ?>&id=<?= (int)$firstVariant['product_id'] ?>&back=detail"
                            class="pd-btn-wish <?= $isFavorited ? 'on' : '' ?>"
                            title="<?= $isFavorited ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích' ?>">
                             <i class="<?= $isFavorited ? 'fas' : 'far' ?> fa-heart"></i>
@@ -426,7 +426,7 @@ if (isset($_SESSION['user_id'])) {
         </h3>
 
         <?php if (isset($_SESSION['user_id'])): ?>
-            <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=addComment" class="pd-cmt-form">
+            <form method="POST" action="/Duan1/index.php?act=addComment" class="pd-cmt-form">
                 <input type="hidden" name="product_id" value="<?= (int)$firstVariant['product_id'] ?>">
 
                 <div class="pd-cmt-author">
@@ -454,7 +454,7 @@ if (isset($_SESSION['user_id'])) {
                 <i class="fas fa-lock lock"></i>
                 <h6>Vui lòng đăng nhập để bình luận</h6>
                 <p>Chia sẻ trải nghiệm của bạn với cộng đồng HDTT</p>
-                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=loginUser"><i class="fas fa-sign-in-alt"></i> Đăng nhập ngay</a>
+                <a href="/Duan1/index.php?act=loginUser"><i class="fas fa-sign-in-alt"></i> Đăng nhập ngay</a>
             </div>
         <?php endif; ?>
 
@@ -494,9 +494,9 @@ if (isset($_SESSION['user_id'])) {
         <h3 class="pd-block-title"><i class="fas fa-th-large"></i> Có thể bạn cũng thích</h3>
         <div class="pd-rel-grid">
             <?php foreach ($relatedProducts as $rp): $rpStock = (int)($rp['total_stock'] ?? 0); ?>
-                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$rp['product_id'] ?>" class="pd-rel-card">
+                <a href="/Duan1/index.php?act=detail&id=<?= (int)$rp['product_id'] ?>" class="pd-rel-card">
                     <div class="pd-rel-img">
-                        <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($rp['image']) ?>"
+                        <img src="/Duan1/uploads/<?= htmlspecialchars($rp['image']) ?>"
                              alt="<?= htmlspecialchars($rp['product_name']) ?>" loading="lazy">
                     </div>
                     <div class="pd-rel-body">

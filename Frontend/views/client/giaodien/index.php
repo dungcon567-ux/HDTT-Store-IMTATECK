@@ -14,7 +14,6 @@ $pageTitle = 'Trang chủ';
 $activeNav = 'home';
 require_once __DIR__ . '/_header.php';
 ?>
-
     <!-- ============================================================
          EDITORIAL MAGAZINE THEME (chỉ áp dụng trang chủ)
          Font: Fraunces (heading) + Inter (body)
@@ -297,10 +296,10 @@ require_once __DIR__ . '/_header.php';
                 <h1 class="hdtt-hero-title">Mặc đẹp. <span>Sống chất.</span><br>Mỗi ngày.</h1>
                 <p class="hdtt-hero-sub">Tủ đồ kể câu chuyện của bạn — chất liệu cao cấp, kiểu dáng hiện đại, không kén người mặc.</p>
                 <div class="hdtt-hero-cta">
-                    <a class="hdtt-hero-btn primary" href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien#products">
+                    <a class="hdtt-hero-btn primary" href="/Duan1/index.php?act=giaodien#products">
                         <i class="fas fa-shopping-bag"></i> Mua ngay
                     </a>
-                    <a class="hdtt-hero-btn ghost" href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien#top-sellers">
+                    <a class="hdtt-hero-btn ghost" href="/Duan1/index.php?act=giaodien#top-sellers">
                         <i class="fas fa-fire"></i> Xem hàng hot
                     </a>
                 </div>
@@ -419,18 +418,18 @@ require_once __DIR__ . '/_header.php';
                 <h2><i class="fas fa-th-large"></i>Mua sắm theo danh mục</h2>
                 <p>Chọn nhanh danh mục yêu thích của bạn</p>
             </div>
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien#products">
+            <a href="/Duan1/index.php?act=giaodien#products">
                 Xem tất cả <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         <div class="hdtt-cats-grid">
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien#products"
+            <a href="/Duan1/index.php?act=giaodien#products"
                class="hdtt-cat all <?= $currentCategory === 0 ? 'active' : '' ?>">
                 <div class="hdtt-cat-icon"><i class="fas fa-grip"></i></div>
                 <p class="hdtt-cat-name">Tất cả</p>
             </a>
             <?php foreach ($categoryMap as $catId => $cat): ?>
-                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien&category=<?= $catId ?>#products"
+                <a href="/Duan1/index.php?act=giaodien&category=<?= $catId ?>#products"
                    class="hdtt-cat <?= $currentCategory === $catId ? 'active' : '' ?>">
                     <div class="hdtt-cat-icon"><i class="fas <?= $cat['icon'] ?>"></i></div>
                     <p class="hdtt-cat-name"><?= htmlspecialchars($cat['name']) ?></p>
@@ -456,7 +455,7 @@ require_once __DIR__ . '/_header.php';
                             Hiện có <b><?= $totalVariants ?></b> mẫu
                             <?= $currentCategoryName !== '' ? 'thuộc danh mục "' . htmlspecialchars($currentCategoryName) . '"' : 'đang bán' ?>
                             <?php if ($currentCategory > 0): ?>
-                                &middot; <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="text-decoration-none">
+                                &middot; <a href="/Duan1/index.php?act=giaodien" class="text-decoration-none">
                                     <i class="fas fa-times-circle"></i> Bỏ lọc
                                 </a>
                             <?php endif; ?>
@@ -624,7 +623,7 @@ require_once __DIR__ . '/_header.php';
                                     <div class="col-sm-6 col-lg-4 col-xl-3">
                                         <div class="pcard wow fadeInUp" data-wow-delay="0.1s">
                                             <div class="pcard-img">
-                                                <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                                <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
                                                      alt="<?= htmlspecialchars($item['product_name']) ?>"
                                                      loading="lazy">
 
@@ -634,7 +633,7 @@ require_once __DIR__ . '/_header.php';
                                                     <span class="pcard-tag new">Mới</span>
                                                 <?php endif; ?>
 
-                                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                                    class="pcard-eye" title="Xem nhanh">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
@@ -646,7 +645,7 @@ require_once __DIR__ . '/_header.php';
 
                                             <div class="pcard-body">
                                                 <h5 class="pcard-name">
-                                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
+                                                    <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
                                                         <?= htmlspecialchars($item['product_name']) ?>
                                                     </a>
                                                 </h5>
@@ -680,7 +679,7 @@ require_once __DIR__ . '/_header.php';
                                                     <?php endif; ?>
                                                 </div>
 
-                                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                                    class="pcard-btn <?= !$hasStock ? 'disabled' : '' ?>">
                                                     <i class="fas fa-shopping-bag"></i> Xem chi tiết
                                                 </a>
@@ -704,7 +703,7 @@ require_once __DIR__ . '/_header.php';
                                 $params = ['act' => 'giaodien', 'page' => $p];
                                 if ($keyword !== '') $params['keyword'] = $keyword;
                                 if ($currentCategory > 0) $params['category'] = $currentCategory;
-                                return '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?' . http_build_query($params) . '#products';
+                                return '/Duan1/index.php?' . http_build_query($params) . '#products';
                             };
                             $start = max(1, $page - 2);
                             $end   = min($totalPages, $page + 2);
@@ -802,14 +801,14 @@ require_once __DIR__ . '/_header.php';
                             <div class="col-sm-6 col-lg-4 col-xl-3">
                                 <div class="pcard wow fadeInUp" data-wow-delay="0.1s">
                                     <div class="pcard-img">
-                                        <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                        <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
                                              alt="<?= htmlspecialchars($item['product_name']) ?>" loading="lazy">
                                         <?php if (!$hasStock): ?>
                                             <span class="pcard-tag out">Hết hàng</span>
                                         <?php else: ?>
                                             <span class="pcard-tag new">Mới</span>
                                         <?php endif; ?>
-                                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                            class="pcard-eye"><i class="fas fa-eye"></i></a>
                                         <?php if ($catLabel): ?>
                                             <span class="pcard-cat cat-name-<?= $catId ?>"><?= htmlspecialchars($catLabel) ?></span>
@@ -817,7 +816,7 @@ require_once __DIR__ . '/_header.php';
                                     </div>
                                     <div class="pcard-body">
                                         <h5 class="pcard-name">
-                                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
+                                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
                                                 <?= htmlspecialchars($item['product_name']) ?>
                                             </a>
                                         </h5>
@@ -847,7 +846,7 @@ require_once __DIR__ . '/_header.php';
                                                 <i class="fas fa-times-circle"></i> Tạm hết hàng
                                             <?php endif; ?>
                                         </div>
-                                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                            class="pcard-btn <?= !$hasStock ? 'disabled' : '' ?>">
                                             <i class="fas fa-shopping-bag"></i> Xem chi tiết
                                         </a>
@@ -1070,14 +1069,14 @@ require_once __DIR__ . '/_header.php';
                             <div class="tcard-fire"><i class="fas fa-fire"></i> Đã bán <?= $sold ?></div>
                         <?php endif; ?>
 
-                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>" class="tcard-img d-block">
-                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($p['image']) ?>"
+                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>" class="tcard-img d-block">
+                            <img src="/Duan1/uploads/<?= htmlspecialchars($p['image']) ?>"
                                  alt="<?= htmlspecialchars($p['product_name']) ?>" loading="lazy">
                         </a>
 
                         <div class="tcard-body">
                             <h6 class="tcard-name">
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
                                     <?= htmlspecialchars($p['product_name']) ?>
                                 </a>
                             </h6>
@@ -1100,7 +1099,7 @@ require_once __DIR__ . '/_header.php';
                                 <?php endif; ?>
                             </div>
 
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
+                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
                                class="tcard-link">
                                 <i class="fas fa-shopping-bag"></i> Xem chi tiết
                             </a>

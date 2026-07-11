@@ -232,7 +232,7 @@ require_once __DIR__ . '/_header.php';
                                 <input type="checkbox" form="checkoutForm" name="selected_cart[]" value="<?= $item['id'] ?>" class="item-check">
                             </div>
                             <div class="cart-item-img">
-                                <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
                                      alt="<?= htmlspecialchars($item['product_name']) ?>">
                             </div>
                             <div class="cart-item-info">
@@ -244,7 +244,7 @@ require_once __DIR__ . '/_header.php';
                                 <div class="cart-item-price"><?= number_format($item['price']) ?>đ <small>/sp</small></div>
                             </div>
                             <div class="cart-item-actions">
-                                <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=updateCart" class="cart-qty-form">
+                                <form method="POST" action="/Duan1/index.php?act=updateCart" class="cart-qty-form">
                                     <input type="hidden" name="cart_id" value="<?= $item['id'] ?>">
                                     <input type="number" name="quantity" value="<?= $item['quantity'] ?>"
                                            min="1" max="<?= (int)$item['stock'] ?>" class="cart-qty-input">
@@ -252,7 +252,7 @@ require_once __DIR__ . '/_header.php';
                                 </form>
                                 <small class="cart-qty-stock">Còn lại: <b><?= max(0, (int)$item['stock'] - (int)$item['quantity']) ?></b>/<?= (int)$item['stock'] ?></small>
                                 <div class="cart-item-subtotal"><?= number_format($subtotal) ?>đ</div>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=deleteCart&id=<?= $item['id'] ?>"
+                                <a href="/Duan1/index.php?act=deleteCart&id=<?= $item['id'] ?>"
                                    class="cart-item-del"
                                    onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?')">
                                     <i class="fas fa-trash-alt"></i> Xóa
@@ -278,7 +278,7 @@ require_once __DIR__ . '/_header.php';
                             <span class="summary-total-num"><?= number_format($total) ?>đ</span>
                         </div>
 
-                        <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=checkout" id="checkoutForm">
+                        <form method="POST" action="/Duan1/index.php?act=checkout" id="checkoutForm">
                             <button type="submit" class="summary-checkout">
                                 <i class="fas fa-credit-card"></i> Tiến hành thanh toán
                             </button>
@@ -293,10 +293,10 @@ require_once __DIR__ . '/_header.php';
         </div>
 
         <div class="cart-foot-actions">
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="cart-btn-link outline">
+            <a href="/Duan1/index.php?act=giaodien" class="cart-btn-link outline">
                 <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
             </a>
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="cart-btn-link solid">
+            <a href="/Duan1/index.php?act=myOrders" class="cart-btn-link solid">
                 <i class="fas fa-box"></i> Lịch sử đơn hàng
             </a>
         </div>
@@ -306,7 +306,7 @@ require_once __DIR__ . '/_header.php';
             <i class="fas fa-shopping-cart"></i>
             <h4>Giỏ hàng đang trống</h4>
             <p>Khám phá các sản phẩm để thêm vào giỏ hàng nhé!</p>
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="cart-btn-link solid">
+            <a href="/Duan1/index.php?act=giaodien" class="cart-btn-link solid">
                 <i class="fas fa-shopping-bag"></i> Mua sắm ngay
             </a>
         </div>

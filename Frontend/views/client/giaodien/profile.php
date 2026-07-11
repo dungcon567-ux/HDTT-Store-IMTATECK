@@ -3,8 +3,8 @@ $pageTitle = 'Thông tin cá nhân';
 $activeNav = 'profile';
 require_once __DIR__ . '/_header.php';
 
-$avatarUrl = !empty($user['avatar']) && file_exists(__DIR__ . '/../../../uploads/' . $user['avatar'])
-    ? '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/' . htmlspecialchars($user['avatar'])
+$avatarUrl = !empty($user['avatar']) && file_exists(__DIR__ . '/../../../../uploads/' . $user['avatar'])
+    ? '/Duan1/uploads/' . htmlspecialchars($user['avatar'])
     : null;
 $initial = strtoupper(mb_substr($user['username'], 0, 1));
 ?>
@@ -221,13 +221,13 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
 
                 <div class="pro-card mt-4" style="padding:20px">
                     <h4 style="margin:0 0 12px;font-size:15px"><i class="fas fa-link text-primary me-2"></i>Liên kết nhanh</h4>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569;transition:.2s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                    <a href="/Duan1/index.php?act=myOrders" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569;transition:.2s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-box-open me-2 text-primary"></i> Đơn hàng của tôi
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=cart" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                    <a href="/Duan1/index.php?act=cart" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-shopping-cart me-2 text-primary"></i> Giỏ hàng
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=logout" class="d-block text-decoration-none p-2 rounded" style="color:#dc3545" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
+                    <a href="/Duan1/index.php?act=logout" class="d-block text-decoration-none p-2 rounded" style="color:#dc3545" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
                     </a>
                 </div>

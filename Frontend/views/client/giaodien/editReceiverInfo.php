@@ -22,7 +22,7 @@ $statusLabel = match ($order['status']) {
             <h2 class="mb-1"><i class="fas fa-user-edit text-primary me-2"></i>Sửa thông tin nhận hàng <span class="text-muted">#<?= (int)$order['id'] ?></span></h2>
             <small class="text-muted">Cập nhật người nhận, số điện thoại, địa chỉ giao hàng</small>
         </div>
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
+        <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="fas fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
@@ -37,7 +37,7 @@ $statusLabel = match ($order['status']) {
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=editReceiverInfo">
+            <form method="POST" action="/Duan1/index.php?act=editReceiverInfo">
                 <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
 
                 <div class="card shadow-sm border-0 rounded-4 mb-3">
@@ -80,7 +80,7 @@ $statusLabel = match ($order['status']) {
                     <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
                         <i class="fas fa-save me-2"></i>Lưu thay đổi
                     </button>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                    <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                         Hủy
                     </a>
                 </div>
@@ -94,7 +94,7 @@ $statusLabel = match ($order['status']) {
 
                     <?php foreach ($orderDetails as $item): ?>
                         <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
+                            <img src="/Duan1/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="text-muted small">

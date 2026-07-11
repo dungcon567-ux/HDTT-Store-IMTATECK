@@ -61,7 +61,7 @@
             <div class="row g-4 align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-md-0">
                     <span class="text-white">
-                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="border-bottom text-white">
+                        <a href="/Duan1/index.php?act=giaodien" class="border-bottom text-white">
                             <i class="fas fa-copyright text-light me-2"></i>HDTT Store
                         </a>
                         &copy; <?= date('Y') ?>. All rights reserved.

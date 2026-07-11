@@ -21,7 +21,7 @@ class admincontroller {
         $keyword = trim($_GET['keyword'] ?? '');
         $products = $productModel->getAllProducts($keyword);
 
-        require_once __DIR__ . '/../views/admin/main.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/main.php';
     }
 
     public function home() {
@@ -41,7 +41,7 @@ class admincontroller {
         $item = $productModel->getProductDetailById((int)$id);
 
         if ($item) {
-            require_once __DIR__ . '/../views/admin/ViewProduct/DetailProduct.php';
+            require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/DetailProduct.php';
         } else {
             echo "Không tìm thấy sản phẩm này trong cơ sở dữ liệu!";
         }
@@ -52,7 +52,7 @@ class admincontroller {
         $keyword = trim($_GET['keyword'] ?? '');
         $variants = $productModel->getAllVariants($keyword);
 
-        require_once __DIR__ . '/../views/admin/ProductUser.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ProductUser.php';
     }
 
     public function login() {
@@ -98,7 +98,7 @@ class admincontroller {
             }
         }
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/login.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/login.php';
     }
 
     public function register() {
@@ -159,7 +159,7 @@ class admincontroller {
             }
         }
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/register.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/register.php';
     }
 
     public function adminProduct() {
@@ -169,7 +169,7 @@ class admincontroller {
         $keyword = trim($_GET['keyword'] ?? '');
         $products = $productModel->getAllProducts($keyword);
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/adminProduct.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/adminProduct.php';
     }
 
     public function addProduct() {
@@ -214,7 +214,7 @@ class admincontroller {
             }
         }
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/add_product.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/add_product.php';
     }
 
     public function editProduct() {
@@ -277,7 +277,7 @@ class admincontroller {
             $product['description'] = $description;
         }
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/editproduct.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/editproduct.php';
     }
 
     public function deleteProduct() {
@@ -319,7 +319,7 @@ class admincontroller {
         $userModel = new User();
         $users = $userModel->getAll();
 
-        require_once __DIR__ . '/../views/admin/User/users.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/User/users.php';
     }
 
     public function deleteUser() {
@@ -412,7 +412,7 @@ class admincontroller {
             return;
         }
 
-        require_once __DIR__ . '/../views/admin/User/EditUser.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/User/EditUser.php';
     }
 
     public function CateProduct() {
@@ -421,7 +421,7 @@ class admincontroller {
         $productModel = new Product();
         $variants = $productModel->getAllVariants();
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/CateProduct.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/CateProduct.php';
     }
 
     public function addCateProduct() {
@@ -504,7 +504,7 @@ class admincontroller {
         $colors   = $productModel->getColors();
         $sizes    = $productModel->getSizes();
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/AddCateProduct.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/AddCateProduct.php';
     }
 
     public function editCateProduct() {
@@ -609,7 +609,7 @@ class admincontroller {
         $colors   = $productModel->getColors();
         $sizes    = $productModel->getSizes();
 
-        require_once __DIR__ . '/../views/admin/ViewProduct/EditCateProduct.php';
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/EditCateProduct.php';
     }
 
     public function deleteCateProduct() {
@@ -648,7 +648,7 @@ class admincontroller {
     $productModel = new Product();
     $orders = $productModel->getAllOrders();
 
-    require_once __DIR__ . '/../views/admin/Order/donhang.php';
+    require_once __DIR__ . '/../../Frontend/views/admin/Order/donhang.php';
 }
 
 public function detailOrder()
@@ -672,7 +672,7 @@ public function detailOrder()
 
     $orderDetails = $productModel->getOrderDetails($orderId);
 
-    require_once __DIR__ . '/../views/admin/Order/detailOrder.php';
+    require_once __DIR__ . '/../../Frontend/views/admin/Order/detailOrder.php';
 }
 
 public function thongke()
@@ -682,7 +682,7 @@ public function thongke()
     $productModel = new Product();
     $thongke = $productModel->getThongKeDoanhThu();
 
-    require_once __DIR__ . '/../views/admin/Order/thongke.php';
+    require_once __DIR__ . '/../../Frontend/views/admin/Order/thongke.php';
 }
 
 public function editOrder() {
@@ -820,7 +820,7 @@ public function editOrder() {
         $order['status']           = $status;
     }
 
-    require_once __DIR__ . '/../views/admin/Order/editOrder.php';
+    require_once __DIR__ . '/../../Frontend/views/admin/Order/editOrder.php';
 }
 
 public function updatePaymentStatus() {

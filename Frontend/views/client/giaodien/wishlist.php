@@ -118,19 +118,19 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
                         <?php if ($catLabel): ?>
                             <span class="wl-cat"><?= htmlspecialchars($catLabel) ?></span>
                         <?php endif; ?>
-                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=toggleWishlist&id=<?= (int)$p['product_id'] ?>&back=wishlist"
+                        <a href="/Duan1/index.php?act=toggleWishlist&id=<?= (int)$p['product_id'] ?>&back=wishlist"
                            class="wl-remove" title="Bỏ khỏi yêu thích"
                            onclick="return confirm('Bỏ sản phẩm này khỏi yêu thích?');">
                             <i class="fas fa-heart"></i>
                         </a>
-                        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
-                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($p['image']) ?>"
+                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                            <img src="/Duan1/uploads/<?= htmlspecialchars($p['image']) ?>"
                                  alt="<?= htmlspecialchars($p['product_name']) ?>" loading="lazy">
                         </a>
                     </div>
                     <div class="wl-body">
                         <h6 class="wl-name">
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
                                 <?= htmlspecialchars($p['product_name']) ?>
                             </a>
                         </h6>
@@ -150,7 +150,7 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
                             <?php endif; ?>
                         </div>
                         <div class="wl-actions">
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
+                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
                                class="wl-btn primary">
                                 <i class="fas fa-shopping-bag"></i> Xem & mua
                             </a>
@@ -164,7 +164,7 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
             <i class="far fa-heart"></i>
             <h3>Chưa có sản phẩm yêu thích</h3>
             <p>Bấm vào biểu tượng ❤️ trên sản phẩm bạn thích để lưu lại đây.</p>
-            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="btn btn-primary rounded-pill px-4">
+            <a href="/Duan1/index.php?act=giaodien" class="btn btn-primary rounded-pill px-4">
                 <i class="fas fa-shopping-bag me-2"></i>Khám phá sản phẩm
             </a>
         </div>

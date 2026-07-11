@@ -13,9 +13,9 @@ $isPaid     = $order['payment_status'] === 'paid';
 $needsPay   = $isOnline && !$isPaid;
 $transferNote = 'HDTT' . $order['id'];
 
-$qrStaticPath = __DIR__ . '/../../../uploads/qr_zalopay.png';
+$qrStaticPath = __DIR__ . '/../../../../uploads/qr_zalopay.png';
 if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
-    $qrUrl = '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/qr_zalopay.png';
+    $qrUrl = '/Duan1/uploads/qr_zalopay.png';
 } else {
     // Fallback: VietQR động (chuẩn NAPAS 247 - app nào cũng quét được)
     $qrUrl  = 'https://img.vietqr.io/image/MOMO-PSP2604910500000353-compact2.png'
@@ -31,7 +31,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
             <h2 class="mb-1"><i class="fas fa-clipboard-check text-primary me-2"></i>Hoàn tất đặt hàng <span class="text-muted">#<?= (int)$order['id'] ?></span></h2>
             <small class="text-muted">Kiểm tra và bổ sung thông tin trước khi xác nhận đơn hàng</small>
         </div>
-        <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
+        <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="fas fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
@@ -46,7 +46,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=confirmOrder">
+            <form method="POST" action="/Duan1/index.php?act=confirmOrder">
                 <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
 
                 <div class="card shadow-sm border-0 rounded-4 mb-3">
@@ -156,7 +156,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
                             </div>
 
                             <div class="mt-3 d-flex flex-wrap gap-2">
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>"
+                                <a href="/Duan1/index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>"
                                    class="btn btn-warning rounded-pill px-4 py-2 text-white fw-bold">
                                     <i class="fas fa-mobile-alt me-2"></i>Thanh toán ngay
                                 </a>
@@ -177,7 +177,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
                             <i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng
                         </button>
                     <?php endif; ?>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                    <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                         Hủy
                     </a>
                 </div>
@@ -200,7 +200,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
 
                     <?php foreach ($orderDetails as $item): ?>
                         <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
+                            <img src="/Duan1/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="text-muted small">

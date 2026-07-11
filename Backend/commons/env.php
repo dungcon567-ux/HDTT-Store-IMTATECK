@@ -15,7 +15,7 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME'    , 'php-oop-basic');
 
-define('PATH_ROOT'    , __DIR__ . '/../');
+define('PATH_ROOT'    , __DIR__ . '/../../');
 
 // ===== VNPAY Sandbox =====
 define('VNPAY_TMN_CODE'    , 'JHH18UX3');

@@ -46,6 +46,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
     }
 </style>
 
+
 <div class="container py-5">
     <h2 class="mb-4">Xác nhận thanh toán</h2>
 
@@ -61,7 +62,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <form method="POST" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=placeOrder">
+            <form method="POST" action="/Duan1/index.php?act=placeOrder">
                 <?php foreach ($checkoutItems as $item): ?>
                     <input type="hidden" name="selected_cart[]" value="<?= $item['id'] ?>">
                 <?php endforeach; ?>
@@ -143,7 +144,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
                             <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
                                 <i class="fas fa-lock me-2"></i>Xác nhận đặt hàng
                             </button>
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=cart" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                            <a href="/Duan1/index.php?act=cart" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                                 Quay lại giỏ
                             </a>
                         </div>
@@ -159,7 +160,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
 
                     <?php foreach ($checkoutItems as $item): ?>
                         <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
+                            <img src="/Duan1/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="text-muted small">

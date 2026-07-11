@@ -1,11 +1,11 @@
 <?php
 
-require_once './commons/env.php';
-require_once './commons/function.php';
-require_once './controllers/admincontroller.php';
-require_once './controllers/HomeController.php';
-require_once './models/Product.php';
-require_once './models/User.php';
+require_once './Backend/commons/env.php';
+require_once './Backend/commons/function.php';
+require_once './Backend/controllers/admincontroller.php';
+require_once './Backend/controllers/HomeController.php';
+require_once './Backend/models/Product.php';
+require_once './Backend/models/User.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

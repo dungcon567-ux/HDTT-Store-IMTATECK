@@ -22,7 +22,7 @@ if (isset($_SESSION['user_id']) && !array_key_exists('user_avatar', $_SESSION)) 
 }
 $__avatarFile = $_SESSION['user_avatar'] ?? '';
 $__avatarUrl  = $__avatarFile
-    ? '/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/uploads/' . rawurlencode($__avatarFile)
+    ? '/Duan1/uploads/' . rawurlencode($__avatarFile)
     : '';
 ?>
 <!DOCTYPE html>
@@ -33,7 +33,7 @@ $__avatarUrl  = $__avatarFile
     <title><?= htmlspecialchars($pageTitle) ?> - HDTT Store</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <base href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/views/client/giaodien/">
+    <base href="/Duan1/Frontend/views/client/giaodien/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -291,10 +291,10 @@ $__avatarUrl  = $__avatarFile
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
                     <?php if (!isset($_SESSION['user'])): ?>
                         <div class="hdtt-auth-btns">
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=loginUser" class="hdtt-auth-btn login">
+                            <a href="/Duan1/index.php?act=loginUser" class="hdtt-auth-btn login">
                                 <i class="fas fa-sign-in-alt"></i> Đăng nhập
                             </a>
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=registerUser" class="hdtt-auth-btn register">
+                            <a href="/Duan1/index.php?act=registerUser" class="hdtt-auth-btn register">
                                 <i class="fas fa-user-plus"></i> Đăng ký
                             </a>
                         </div>
@@ -333,20 +333,20 @@ $__avatarUrl  = $__avatarFile
                                     </div>
                                 </div>
                                 <div class="hdtt-user-menu-body">
-                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=profile" class="dropdown-item">
+                                    <a href="/Duan1/index.php?act=profile" class="dropdown-item">
                                         <i class="fas fa-user-circle"></i> Thông tin cá nhân
                                     </a>
-                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="dropdown-item">
+                                    <a href="/Duan1/index.php?act=myOrders" class="dropdown-item">
                                         <i class="fas fa-box"></i> Đơn hàng của tôi
                                     </a>
-                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=wishlist" class="dropdown-item">
+                                    <a href="/Duan1/index.php?act=wishlist" class="dropdown-item">
                                         <i class="fas fa-heart"></i> Sản phẩm yêu thích
                                     </a>
-                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=cart" class="dropdown-item">
+                                    <a href="/Duan1/index.php?act=cart" class="dropdown-item">
                                         <i class="fas fa-shopping-cart"></i> Giỏ hàng
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=logout" class="dropdown-item text-danger">
+                                    <a href="/Duan1/index.php?act=logout" class="dropdown-item text-danger">
                                         <i class="fas fa-sign-out-alt"></i> Đăng xuất
                                     </a>
                                 </div>
@@ -363,7 +363,7 @@ $__avatarUrl  = $__avatarFile
         <div class="row gx-0 align-items-center text-center">
             <div class="col-md-4 col-lg-3 text-center text-lg-start">
                 <div class="d-inline-flex align-items-center">
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="navbar-brand p-0">
+                    <a href="/Duan1/index.php?act=giaodien" class="navbar-brand p-0">
                         <h1 class="display-5 text-primary m-0"><i
                                 class="fas fa-shopping-bag text-secondary me-2"></i>HDTT Store</h1>
                     </a>
@@ -372,7 +372,7 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-md-4 col-lg-6 text-center">
                 <div class="position-relative ps-4">
-                    <form method="GET" action="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php">
+                    <form method="GET" action="/Duan1/index.php">
                         <input type="hidden" name="act" value="giaodien">
 
                         <?php
@@ -448,13 +448,13 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-md-4 col-lg-3 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center">
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="text-muted d-flex align-items-center justify-content-center me-3" title="Đơn hàng">
+                    <a href="/Duan1/index.php?act=myOrders" class="text-muted d-flex align-items-center justify-content-center me-3" title="Đơn hàng">
                         <span class="rounded-circle btn-md-square border"><i class="fas fa-box"></i></span>
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=wishlist" class="text-muted d-flex align-items-center justify-content-center me-3" title="Sản phẩm yêu thích">
+                    <a href="/Duan1/index.php?act=wishlist" class="text-muted d-flex align-items-center justify-content-center me-3" title="Sản phẩm yêu thích">
                         <span class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></span>
                     </a>
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=cart" class="text-muted d-flex align-items-center justify-content-center">
+                    <a href="/Duan1/index.php?act=cart" class="text-muted d-flex align-items-center justify-content-center">
                         <span class="rounded-circle btn-md-square border">
                             <i class="fas fa-shopping-cart"></i>
                         </span>
@@ -478,14 +478,14 @@ $__avatarUrl  = $__avatarFile
                     </button>
                     <div class="collapse navbar-collapse" id="allCat">
                         <div class="hdtt-allcat-panel">
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien"
+                            <a href="/Duan1/index.php?act=giaodien"
                                class="hdtt-allcat-item all">
                                 <i class="fas fa-th icon"></i>
                                 <span>Tất cả sản phẩm</span>
                                 <i class="fas fa-arrow-right arrow"></i>
                             </a>
                             <?php foreach ($categoryMap as $catId => $cat): ?>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien&category=<?= $catId ?>"
+                                <a href="/Duan1/index.php?act=giaodien&category=<?= $catId ?>"
                                    class="hdtt-allcat-item">
                                     <i class="fas <?= $cat['icon'] ?> icon"></i>
                                     <span><?= htmlspecialchars($cat['name']) ?></span>
@@ -499,7 +499,7 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-12 col-lg-9">
                 <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
-                    <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="navbar-brand d-block d-lg-none">
+                    <a href="/Duan1/index.php?act=giaodien" class="navbar-brand d-block d-lg-none">
                         <h1 class="display-5 text-secondary m-0"><i
                                 class="fas fa-shopping-bag text-white me-2"></i>HDTT Store</h1>
                     </a>
@@ -511,14 +511,14 @@ $__avatarUrl  = $__avatarFile
 
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Trang chủ</a>
-                            <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
+                            <a href="/Duan1/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Trang chủ</a>
+                            <a href="/Duan1/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
                             <?php if (isset($_SESSION['user_id'])): ?>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=myOrders" class="nav-item nav-link <?= ($activeNav ?? '') === 'orders' ? 'active' : '' ?>">Đơn hàng</a>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=cart" class="nav-item nav-link <?= ($activeNav ?? '') === 'cart' ? 'active' : '' ?>">Giỏ hàng</a>
+                                <a href="/Duan1/index.php?act=myOrders" class="nav-item nav-link <?= ($activeNav ?? '') === 'orders' ? 'active' : '' ?>">Đơn hàng</a>
+                                <a href="/Duan1/index.php?act=cart" class="nav-item nav-link <?= ($activeNav ?? '') === 'cart' ? 'active' : '' ?>">Giỏ hàng</a>
                             <?php else: ?>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
-                                <a href="/Duan1/giaodien/duaan1-giaodien/mvc-oop-basic/index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
+                                <a href="/Duan1/index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
+                                <a href="/Duan1/index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
                             <?php endif; ?>
                         </div>
 
