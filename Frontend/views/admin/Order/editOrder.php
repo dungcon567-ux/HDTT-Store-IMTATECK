@@ -47,6 +47,7 @@ $receiverEditable = in_array($order['status'], ['cho_xac_nhan', 'da_dat_hang', '
     <?php endif; ?>
 
     <form method="POST">
+                        <?= csrf_field() ?>
         <div style="font-size:11px;color:var(--text-mut);text-transform:uppercase;letter-spacing:1.4px;font-weight:600;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px">
             <i class="bi bi-person-vcard"></i> Thông tin người nhận
             <?php if (!$receiverEditable): ?>

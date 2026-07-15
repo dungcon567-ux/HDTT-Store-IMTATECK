@@ -196,6 +196,85 @@ class User
         return $stmt->execute([$id]);
     }
 
+    // ===== CHỐNG BRUTE-FORCE ĐĂNG NHẬP (theo IP) =====
+
+    /** Trả về số GIÂY còn bị khóa (0 = không khóa). */
+    public function loginLockRemaining(string $ip): int
+    {
+        $stmt = $this->conn->prepare("SELECT locked_until FROM login_throttle WHERE ip = ?");
+        $stmt->execute([$ip]);
+        $row = $stmt->fetch();
+        if (!$row || empty($row['locked_until'])) {
+            return 0;
+        }
+        $remain = (int)$row['locked_until'] - time();
+        return $remain > 0 ? $remain : 0;
+    }
+
+    /** Ghi nhận 1 lần đăng nhập sai; khóa tạm khi vượt ngưỡng. */
+    public function recordLoginFail(string $ip, int $maxFails = 5, int $lockMinutes = 15): void
+    {
+        $stmt = $this->conn->prepare("SELECT fail_count FROM login_throttle WHERE ip = ?");
+        $stmt->execute([$ip]);
+        $row = $stmt->fetch();
+        $count = $row ? (int)$row['fail_count'] + 1 : 1;
+        $lockedUntil = $count >= $maxFails ? time() + $lockMinutes * 60 : null;
+
+        $stmt = $this->conn->prepare("
+            INSERT INTO login_throttle (ip, fail_count, locked_until)
+            VALUES (:ip, :c, :lu)
+            ON DUPLICATE KEY UPDATE fail_count = :c2, locked_until = :lu2
+        ");
+        $stmt->execute([
+            ':ip' => $ip, ':c' => $count, ':lu' => $lockedUntil,
+            ':c2' => $count, ':lu2' => $lockedUntil,
+        ]);
+    }
+
+    /** Xóa bộ đếm khi đăng nhập thành công. */
+    public function clearLoginThrottle(string $ip): void
+    {
+        $stmt = $this->conn->prepare("DELETE FROM login_throttle WHERE ip = ?");
+        $stmt->execute([$ip]);
+    }
+
+    // ===== QUÊN / ĐẶT LẠI MẬT KHẨU =====
+
+    public function createPasswordReset(string $email, string $tokenHash, int $expiresAt): void
+    {
+        // Vô hiệu hóa các token cũ chưa dùng của email này
+        $this->conn->prepare("UPDATE password_resets SET used = 1 WHERE email = ? AND used = 0")
+                   ->execute([$email]);
+        $stmt = $this->conn->prepare("
+            INSERT INTO password_resets (email, token_hash, expires_at)
+            VALUES (?, ?, ?)
+        ");
+        $stmt->execute([$email, $tokenHash, $expiresAt]);
+    }
+
+    /** Tìm token hợp lệ (chưa dùng, chưa hết hạn). */
+    public function findValidReset(string $tokenHash): array|false
+    {
+        $stmt = $this->conn->prepare("
+            SELECT * FROM password_resets
+            WHERE token_hash = ? AND used = 0 AND expires_at > ?
+            LIMIT 1
+        ");
+        $stmt->execute([$tokenHash, time()]);
+        return $stmt->fetch();
+    }
+
+    public function markResetUsed(int $id): void
+    {
+        $this->conn->prepare("UPDATE password_resets SET used = 1 WHERE id = ?")->execute([$id]);
+    }
+
+    public function updatePasswordByEmail(string $email, string $newHash): bool
+    {
+        $stmt = $this->conn->prepare("UPDATE users SET password = ? WHERE email = ?");
+        return $stmt->execute([$newHash, $email]);
+    }
+
     // ===== HÀM USER CONTROLLER nhé các bạn =====
 
     public function getAllUsers(): array

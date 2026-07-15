@@ -102,6 +102,7 @@ $errors = $errors ?? [];
 <body>
 
 <form method="POST" class="register-card">
+                        <?= csrf_field() ?>
     <div class="brand">
         <div class="brand-mark">H</div>
         <div>

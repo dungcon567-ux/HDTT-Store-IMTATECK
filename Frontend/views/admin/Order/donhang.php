@@ -160,6 +160,7 @@ foreach ($orders as $o) {
                             </span>
                         <?php else: ?>
                             <form method="POST" action="index.php?act=updatePaymentStatus" style="display:flex;gap:6px">
+                        <?= csrf_field() ?>
                                 <input type="hidden" name="order_id" value="<?= (int)$o['id'] ?>">
                                 <select name="payment_status">
                                     <option value="unpaid"         <?= $o['payment_status']==='unpaid'?'selected':'' ?>>Chưa thanh toán</option>
@@ -183,6 +184,7 @@ foreach ($orders as $o) {
                         </span>
                     <?php else: ?>
                         <form method="POST" action="index.php?act=updateOrderStatus" style="display:flex;gap:6px">
+                        <?= csrf_field() ?>
                             <input type="hidden" name="order_id" value="<?= (int)$o['id'] ?>">
                             <select name="status">
                                 <option value="cho_xac_nhan" <?= $o['status']==='cho_xac_nhan'?'selected':'' ?>>Chờ xác nhận</option>

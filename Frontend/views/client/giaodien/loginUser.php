@@ -7,7 +7,8 @@
     <title>Đăng nhập - HDTT Store</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <base href="/Duan1/Frontend/views/client/giaodien/">
+    <base href="<?= BASE_PATH ?>Frontend/views/client/giaodien/">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23000%27/%3E%3Ctext x=%2716%27 y=%2723%27 font-family=%27Arial Black,sans-serif%27 font-size=%2720%27 font-weight=%27900%27 fill=%27%23D8FF00%27 text-anchor=%27middle%27%3EH%3C/text%3E%3C/svg%3E">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -18,6 +19,7 @@
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <link href="css/theme.css" rel="stylesheet">
 </head>
 
 <body>
@@ -95,9 +97,9 @@
                 <nav class="navbar navbar-expand-lg navbar-light bg-primary">
                     <div class="collapse navbar-collapse show">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="/Duan1/index.php?act=giaodien" class="nav-item nav-link">Trang chủ</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link">Trang chủ</a>
                             <a href="#" class="nav-item nav-link active">Đăng nhập</a>
-                            <a href="/Duan1/index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
                         </div>
                         <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3">
                             <i class="fa fa-mobile-alt me-2"></i>0866914326
@@ -322,10 +324,70 @@
         .auth-back:hover{background:#FFFEFB;color:#C2410C;transform:translateX(-2px);box-shadow:0 6px 16px rgba(194,65,12,.15)}
     </style>
 
+    <!-- Dark Premium overrides for auth -->
+    <style>
+        .auth-stage{
+            background:
+              radial-gradient(circle at 15% 20%, rgba(216,255,0,.20) 0%, transparent 45%),
+              radial-gradient(circle at 85% 75%, rgba(216,255,0,.16) 0%, transparent 50%),
+              var(--bg) !important;
+        }
+        .auth-stage::before{background:radial-gradient(circle,rgba(216,255,0,.35) 0%,rgba(216,255,0,0) 70%) !important}
+        .auth-stage::after{background:radial-gradient(circle,rgba(216,255,0,.30) 0%,rgba(216,255,0,0) 70%) !important}
+        .auth-blob{background:radial-gradient(circle,rgba(216,255,0,.35) 0%,rgba(216,255,0,0) 70%) !important}
+        .auth-grid-bg{background-image:
+            linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px) !important}
+
+        .auth-card{
+            background:var(--surface) !important;
+            border:1px solid var(--border-2) !important;
+            box-shadow:0 40px 90px rgba(0,0,0,.6) !important;
+            backdrop-filter:blur(20px);
+        }
+        .auth-side{background:linear-gradient(140deg,#0A0A0A 0%,#0A0A0A 45%,#0A0A0A 100%) !important}
+        .auth-side::after{background:rgba(216,255,0,.25) !important}
+        .auth-side h2 span{background:var(--grad) !important;-webkit-background-clip:text !important;-webkit-text-fill-color:transparent !important}
+
+        .auth-form-side{background:transparent !important;color:var(--text) !important}
+        .auth-head h3{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+        .auth-head p{color:var(--text-3) !important}
+        .auth-field-label{color:var(--text-2) !important}
+        .auth-input{
+            background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text) !important;
+        }
+        .auth-input::placeholder{color:var(--muted) !important}
+        .auth-input:focus{background:var(--surface-3) !important;border-color:var(--accent) !important;box-shadow:0 0 0 4px rgba(216,255,0,.2) !important}
+        .auth-input-wrap > i.fld-icon{color:var(--muted) !important}
+        .auth-input:focus + i.fld-icon,.auth-input-wrap:focus-within > i.fld-icon{color:var(--accent) !important}
+        .auth-toggle-pwd{color:var(--muted) !important}
+        .auth-toggle-pwd:hover{color:var(--accent-2) !important}
+        .auth-row-extra label{color:var(--text-2) !important}
+        .auth-row-extra a{color:var(--accent-3) !important}
+        .auth-submit{background:var(--grad) !important;box-shadow:0 12px 30px rgba(216,255,0,.45) !important}
+        .auth-divider{color:var(--text-3) !important}
+        .auth-divider::before,.auth-divider::after{background:var(--border-2) !important}
+        .auth-foot{color:var(--text-3) !important}
+        .auth-foot a{color:var(--accent-3) !important}
+        .auth-alert{background:rgba(251,113,133,.12) !important;border:1px solid rgba(251,113,133,.3) !important;color:#FECDD3 !important}
+        .auth-alert i{color:var(--danger) !important}
+        .auth-back{
+            background:var(--surface-2) !important;border:1px solid var(--border-2) !important;
+            color:var(--text) !important;backdrop-filter:blur(10px);
+        }
+        .auth-back:hover{background:var(--surface-3) !important;color:var(--accent-2) !important;box-shadow:0 6px 16px rgba(216,255,0,.25) !important}
+        /* sharpen (brutalist) */
+        .auth-card,.auth-side,.auth-brand,.auth-input,.auth-submit,.auth-back,.auth-side ul li i,.auth-toggle-pwd{border-radius:0 !important}
+        .auth-submit{text-transform:uppercase;font-family:'Archivo';font-weight:900;box-shadow:none !important}
+        .auth-submit:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 #000 !important}
+        .auth-side h2,.auth-head h3{font-family:'Anton',sans-serif !important;text-transform:uppercase}
+        .auth-brand{font-family:'Space Mono',monospace !important}
+    </style>
+
     <section class="auth-stage">
         <div class="auth-grid-bg"></div>
         <div class="auth-blob"></div>
-        <a href="/Duan1/index.php?act=giaodien" class="auth-back">
+        <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="auth-back">
             <i class="fas fa-arrow-left"></i> Trang chủ
         </a>
 
@@ -364,7 +426,8 @@
                     </div>
                 <?php endif; ?>
 
-                <form method="POST" action="/Duan1/index.php?act=loginUser" autocomplete="on">
+                <form method="POST" action="<?= BASE_PATH ?>index.php?act=loginUser" autocomplete="on">
+                        <?= csrf_field() ?>
                     <div class="auth-field">
                         <label class="auth-field-label" for="email">EMAIL</label>
                         <div class="auth-input-wrap">
@@ -388,7 +451,7 @@
 
                     <div class="auth-row-extra">
                         <label><input type="checkbox" name="remember"> Ghi nhớ đăng nhập</label>
-                        <a href="#">Quên mật khẩu?</a>
+                        <a href="<?= BASE_PATH ?>index.php?act=forgotPassword">Quên mật khẩu?</a>
                     </div>
 
                     <button type="submit" class="auth-submit">
@@ -399,7 +462,7 @@
 
                     <p class="auth-foot">
                         Chưa có tài khoản?
-                        <a href="/Duan1/index.php?act=registerUser">Đăng ký ngay</a>
+                        <a href="<?= BASE_PATH ?>index.php?act=registerUser">Đăng ký ngay</a>
                     </p>
                 </form>
             </div>
@@ -413,5 +476,6 @@
     <script src="lib/wow/wow.min.js"></script>
     <script src="lib/owlcarousel/owl.carousel.min.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/theme.js"></script>
 </body>
 </html>

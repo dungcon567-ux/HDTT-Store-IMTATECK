@@ -169,6 +169,7 @@ $errors = $errors ?? [];
 
 <div class="right">
     <form method="POST" class="auth-card">
+                        <?= csrf_field() ?>
         <h2 class="auth-title">Chào mừng trở lại 👋</h2>
         <p class="auth-sub">Đăng nhập vào tài khoản admin của bạn để tiếp tục.</p>
 

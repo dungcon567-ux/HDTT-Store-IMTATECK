@@ -232,7 +232,7 @@ require_once __DIR__ . '/_header.php';
                                 <input type="checkbox" form="checkoutForm" name="selected_cart[]" value="<?= $item['id'] ?>" class="item-check">
                             </div>
                             <div class="cart-item-img">
-                                <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($item['image']) ?>"
                                      alt="<?= htmlspecialchars($item['product_name']) ?>">
                             </div>
                             <div class="cart-item-info">
@@ -244,7 +244,8 @@ require_once __DIR__ . '/_header.php';
                                 <div class="cart-item-price"><?= number_format($item['price']) ?>đ <small>/sp</small></div>
                             </div>
                             <div class="cart-item-actions">
-                                <form method="POST" action="/Duan1/index.php?act=updateCart" class="cart-qty-form">
+                                <form method="POST" action="<?= BASE_PATH ?>index.php?act=updateCart" class="cart-qty-form">
+                        <?= csrf_field() ?>
                                     <input type="hidden" name="cart_id" value="<?= $item['id'] ?>">
                                     <input type="number" name="quantity" value="<?= $item['quantity'] ?>"
                                            min="1" max="<?= (int)$item['stock'] ?>" class="cart-qty-input">
@@ -252,7 +253,7 @@ require_once __DIR__ . '/_header.php';
                                 </form>
                                 <small class="cart-qty-stock">Còn lại: <b><?= max(0, (int)$item['stock'] - (int)$item['quantity']) ?></b>/<?= (int)$item['stock'] ?></small>
                                 <div class="cart-item-subtotal"><?= number_format($subtotal) ?>đ</div>
-                                <a href="/Duan1/index.php?act=deleteCart&id=<?= $item['id'] ?>"
+                                <a href="<?= BASE_PATH ?>index.php?act=deleteCart&id=<?= $item['id'] ?>"
                                    class="cart-item-del"
                                    onclick="return confirm('Xóa sản phẩm này khỏi giỏ hàng?')">
                                     <i class="fas fa-trash-alt"></i> Xóa
@@ -269,16 +270,50 @@ require_once __DIR__ . '/_header.php';
                     <div class="cart-section-head">
                         <h3><i class="fas fa-receipt"></i> Tóm tắt đơn</h3>
                     </div>
+                    <?php
+                        $discount = !empty($appliedVoucher) ? calc_voucher_discount($appliedVoucher, $total) : 0;
+                        $grand = max(0, $total - $discount);
+                    ?>
                     <div style="padding:18px 24px">
                         <div class="summary-row"><span>Tạm tính (<?= count($cartItems) ?> sản phẩm)</span><b><?= number_format($total) ?>đ</b></div>
                         <div class="summary-row"><span>Phí vận chuyển</span><b style="color:var(--ed-mustard)">Tính khi thanh toán</b></div>
-                        <div class="summary-row"><span>Voucher</span><b style="color:var(--ed-cocoa)">Chưa áp dụng</b></div>
-                        <div class="summary-total">
-                            <span class="summary-total-label">Tổng cộng</span>
-                            <span class="summary-total-num"><?= number_format($total) ?>đ</span>
+
+                        <!-- Voucher -->
+                        <div style="margin:6px 0 4px">
+                            <?php if (!empty($appliedVoucher) && $discount > 0): ?>
+                                <div class="summary-row" style="align-items:center">
+                                    <span><i class="fas fa-ticket-alt" style="color:var(--accent)"></i>
+                                        Mã <b style="color:var(--accent)"><?= htmlspecialchars($appliedVoucher['code']) ?></b></span>
+                                    <span style="display:flex;align-items:center;gap:10px">
+                                        <b style="color:#6EE7B7">−<?= number_format($discount) ?>đ</b>
+                                        <a href="<?= BASE_PATH ?>index.php?act=removeVoucher" title="Gỡ mã"
+                                           style="color:var(--danger);font-size:12px"><i class="fas fa-times"></i></a>
+                                    </span>
+                                </div>
+                            <?php else: ?>
+                                <form method="POST" action="<?= BASE_PATH ?>index.php?act=applyVoucher"
+                                      style="display:flex;gap:8px;margin:8px 0">
+                                    <?= csrf_field() ?>
+                                    <input type="text" name="voucher_code" placeholder="NHẬP MÃ GIẢM GIÁ"
+                                           class="form-control" style="text-transform:uppercase"
+                                           value="<?= htmlspecialchars($_SESSION['voucher_code'] ?? '') ?>">
+                                    <button type="submit" class="btn btn-primary" style="white-space:nowrap">Áp dụng</button>
+                                </form>
+                                <?php if (!empty($voucherError)): ?>
+                                    <small style="color:var(--danger)"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($voucherError) ?></small>
+                                <?php else: ?>
+                                    <small style="color:var(--text-3);font-family:'Space Mono',monospace">Thử: GIAM10 · SALE50K · FREESHIP</small>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </div>
 
-                        <form method="POST" action="/Duan1/index.php?act=checkout" id="checkoutForm">
+                        <div class="summary-total">
+                            <span class="summary-total-label">Tổng cộng</span>
+                            <span class="summary-total-num"><?= number_format($grand) ?>đ</span>
+                        </div>
+
+                        <form method="POST" action="<?= BASE_PATH ?>index.php?act=checkout" id="checkoutForm">
+                        <?= csrf_field() ?>
                             <button type="submit" class="summary-checkout">
                                 <i class="fas fa-credit-card"></i> Tiến hành thanh toán
                             </button>
@@ -293,10 +328,10 @@ require_once __DIR__ . '/_header.php';
         </div>
 
         <div class="cart-foot-actions">
-            <a href="/Duan1/index.php?act=giaodien" class="cart-btn-link outline">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="cart-btn-link outline">
                 <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
             </a>
-            <a href="/Duan1/index.php?act=myOrders" class="cart-btn-link solid">
+            <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="cart-btn-link solid">
                 <i class="fas fa-box"></i> Lịch sử đơn hàng
             </a>
         </div>
@@ -306,7 +341,7 @@ require_once __DIR__ . '/_header.php';
             <i class="fas fa-shopping-cart"></i>
             <h4>Giỏ hàng đang trống</h4>
             <p>Khám phá các sản phẩm để thêm vào giỏ hàng nhé!</p>
-            <a href="/Duan1/index.php?act=giaodien" class="cart-btn-link solid">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="cart-btn-link solid">
                 <i class="fas fa-shopping-bag"></i> Mua sắm ngay
             </a>
         </div>
@@ -319,4 +354,5 @@ document.getElementById('checkAll')?.addEventListener('change', function () {
 });
 </script>
 
+<?php require_once __DIR__ . '/_dark_editorial.php'; ?>
 <?php require_once __DIR__ . '/_footer.php'; ?>

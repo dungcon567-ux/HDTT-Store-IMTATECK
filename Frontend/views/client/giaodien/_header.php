@@ -22,7 +22,7 @@ if (isset($_SESSION['user_id']) && !array_key_exists('user_avatar', $_SESSION)) 
 }
 $__avatarFile = $_SESSION['user_avatar'] ?? '';
 $__avatarUrl  = $__avatarFile
-    ? '/Duan1/uploads/' . rawurlencode($__avatarFile)
+    ? BASE_PATH . 'uploads/' . rawurlencode($__avatarFile)
     : '';
 ?>
 <!DOCTYPE html>
@@ -32,8 +32,15 @@ $__avatarUrl  = $__avatarFile
     <meta charset="utf-8">
     <title><?= htmlspecialchars($pageTitle) ?> - HDTT Store</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta name="description" content="HDTT Store — thời trang streetwear chính hãng: áo, quần, giày. Giao nhanh 1–3 ngày, đổi trả 7 ngày, freeship đơn từ 500k.">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($pageTitle) ?> - HDTT Store">
+    <meta property="og:description" content="Thời trang streetwear chính hãng — áo, quần, giày. Giao nhanh, đổi trả 7 ngày.">
+    <meta property="og:site_name" content="HDTT Store">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23000'/%3E%3Ctext x='16' y='23' font-family='Arial Black,sans-serif' font-size='20' font-weight='900' fill='%23D8FF00' text-anchor='middle'%3EH%3C/text%3E%3C/svg%3E">
 
-    <base href="/Duan1/Frontend/views/client/giaodien/">
+    <base href="<?= BASE_PATH ?>Frontend/views/client/giaodien/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
@@ -44,6 +51,8 @@ $__avatarUrl  = $__avatarFile
 
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
+    <!-- Dark Premium design system (must load last to win the cascade) -->
+    <link href="css/theme.css" rel="stylesheet">
 
     <style>
         /* ====== USER DROPDOWN (topbar) ====== */
@@ -272,7 +281,7 @@ $__avatarUrl  = $__avatarFile
 <body>
 
     <!-- Topbar Start -->
-    <div class="container-fluid px-5 d-none border-bottom d-lg-block">
+    <div class="container-fluid px-5 d-none border-bottom d-lg-block hdtt-headrow">
         <div class="row gx-0 align-items-center">
             <div class="col-lg-4 text-center text-lg-start mb-lg-0">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
@@ -291,10 +300,10 @@ $__avatarUrl  = $__avatarFile
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
                     <?php if (!isset($_SESSION['user'])): ?>
                         <div class="hdtt-auth-btns">
-                            <a href="/Duan1/index.php?act=loginUser" class="hdtt-auth-btn login">
+                            <a href="<?= BASE_PATH ?>index.php?act=loginUser" class="hdtt-auth-btn login">
                                 <i class="fas fa-sign-in-alt"></i> Đăng nhập
                             </a>
-                            <a href="/Duan1/index.php?act=registerUser" class="hdtt-auth-btn register">
+                            <a href="<?= BASE_PATH ?>index.php?act=registerUser" class="hdtt-auth-btn register">
                                 <i class="fas fa-user-plus"></i> Đăng ký
                             </a>
                         </div>
@@ -333,20 +342,20 @@ $__avatarUrl  = $__avatarFile
                                     </div>
                                 </div>
                                 <div class="hdtt-user-menu-body">
-                                    <a href="/Duan1/index.php?act=profile" class="dropdown-item">
+                                    <a href="<?= BASE_PATH ?>index.php?act=profile" class="dropdown-item">
                                         <i class="fas fa-user-circle"></i> Thông tin cá nhân
                                     </a>
-                                    <a href="/Duan1/index.php?act=myOrders" class="dropdown-item">
+                                    <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="dropdown-item">
                                         <i class="fas fa-box"></i> Đơn hàng của tôi
                                     </a>
-                                    <a href="/Duan1/index.php?act=wishlist" class="dropdown-item">
+                                    <a href="<?= BASE_PATH ?>index.php?act=wishlist" class="dropdown-item">
                                         <i class="fas fa-heart"></i> Sản phẩm yêu thích
                                     </a>
-                                    <a href="/Duan1/index.php?act=cart" class="dropdown-item">
+                                    <a href="<?= BASE_PATH ?>index.php?act=cart" class="dropdown-item">
                                         <i class="fas fa-shopping-cart"></i> Giỏ hàng
                                     </a>
                                     <div class="dropdown-divider"></div>
-                                    <a href="/Duan1/index.php?act=logout" class="dropdown-item text-danger">
+                                    <a href="<?= BASE_PATH ?>index.php?act=logout" class="dropdown-item text-danger">
                                         <i class="fas fa-sign-out-alt"></i> Đăng xuất
                                     </a>
                                 </div>
@@ -359,11 +368,11 @@ $__avatarUrl  = $__avatarFile
     </div>
     <!-- Topbar End -->
 
-    <div class="container-fluid px-5 py-4 d-none d-lg-block">
+    <div class="container-fluid px-5 py-4 d-none d-lg-block hdtt-headrow">
         <div class="row gx-0 align-items-center text-center">
             <div class="col-md-4 col-lg-3 text-center text-lg-start">
                 <div class="d-inline-flex align-items-center">
-                    <a href="/Duan1/index.php?act=giaodien" class="navbar-brand p-0">
+                    <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="navbar-brand p-0">
                         <h1 class="display-5 text-primary m-0"><i
                                 class="fas fa-shopping-bag text-secondary me-2"></i>HDTT Store</h1>
                     </a>
@@ -372,7 +381,7 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-md-4 col-lg-6 text-center">
                 <div class="position-relative ps-4">
-                    <form method="GET" action="/Duan1/index.php">
+                    <form method="GET" action="<?= BASE_PATH ?>index.php">
                         <input type="hidden" name="act" value="giaodien">
 
                         <?php
@@ -448,13 +457,13 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-md-4 col-lg-3 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center">
-                    <a href="/Duan1/index.php?act=myOrders" class="text-muted d-flex align-items-center justify-content-center me-3" title="Đơn hàng">
+                    <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="text-muted d-flex align-items-center justify-content-center me-3" title="Đơn hàng">
                         <span class="rounded-circle btn-md-square border"><i class="fas fa-box"></i></span>
                     </a>
-                    <a href="/Duan1/index.php?act=wishlist" class="text-muted d-flex align-items-center justify-content-center me-3" title="Sản phẩm yêu thích">
+                    <a href="<?= BASE_PATH ?>index.php?act=wishlist" class="text-muted d-flex align-items-center justify-content-center me-3" title="Sản phẩm yêu thích">
                         <span class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></span>
                     </a>
-                    <a href="/Duan1/index.php?act=cart" class="text-muted d-flex align-items-center justify-content-center">
+                    <a href="<?= BASE_PATH ?>index.php?act=cart" class="text-muted d-flex align-items-center justify-content-center">
                         <span class="rounded-circle btn-md-square border">
                             <i class="fas fa-shopping-cart"></i>
                         </span>
@@ -466,7 +475,7 @@ $__avatarUrl  = $__avatarFile
     </div>
 
     <!-- Navbar Start -->
-    <div class="container-fluid nav-bar p-0">
+    <div class="container-fluid nav-bar hdtt-appbar p-0">
         <div class="row gx-0 bg-primary px-5 align-items-center">
             <div class="col-lg-3 d-none d-lg-block">
                 <nav class="navbar navbar-light position-relative" style="width: 280px;">
@@ -478,14 +487,14 @@ $__avatarUrl  = $__avatarFile
                     </button>
                     <div class="collapse navbar-collapse" id="allCat">
                         <div class="hdtt-allcat-panel">
-                            <a href="/Duan1/index.php?act=giaodien"
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien"
                                class="hdtt-allcat-item all">
                                 <i class="fas fa-th icon"></i>
                                 <span>Tất cả sản phẩm</span>
                                 <i class="fas fa-arrow-right arrow"></i>
                             </a>
                             <?php foreach ($categoryMap as $catId => $cat): ?>
-                                <a href="/Duan1/index.php?act=giaodien&category=<?= $catId ?>"
+                                <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=<?= $catId ?>"
                                    class="hdtt-allcat-item">
                                     <i class="fas <?= $cat['icon'] ?> icon"></i>
                                     <span><?= htmlspecialchars($cat['name']) ?></span>
@@ -499,7 +508,7 @@ $__avatarUrl  = $__avatarFile
 
             <div class="col-12 col-lg-9">
                 <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
-                    <a href="/Duan1/index.php?act=giaodien" class="navbar-brand d-block d-lg-none">
+                    <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="navbar-brand d-block d-lg-none">
                         <h1 class="display-5 text-secondary m-0"><i
                                 class="fas fa-shopping-bag text-white me-2"></i>HDTT Store</h1>
                     </a>
@@ -511,14 +520,14 @@ $__avatarUrl  = $__avatarFile
 
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="/Duan1/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Trang chủ</a>
-                            <a href="/Duan1/index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Trang chủ</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
                             <?php if (isset($_SESSION['user_id'])): ?>
-                                <a href="/Duan1/index.php?act=myOrders" class="nav-item nav-link <?= ($activeNav ?? '') === 'orders' ? 'active' : '' ?>">Đơn hàng</a>
-                                <a href="/Duan1/index.php?act=cart" class="nav-item nav-link <?= ($activeNav ?? '') === 'cart' ? 'active' : '' ?>">Giỏ hàng</a>
+                                <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="nav-item nav-link <?= ($activeNav ?? '') === 'orders' ? 'active' : '' ?>">Đơn hàng</a>
+                                <a href="<?= BASE_PATH ?>index.php?act=cart" class="nav-item nav-link <?= ($activeNav ?? '') === 'cart' ? 'active' : '' ?>">Giỏ hàng</a>
                             <?php else: ?>
-                                <a href="/Duan1/index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
-                                <a href="/Duan1/index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
+                                <a href="<?= BASE_PATH ?>index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
+                                <a href="<?= BASE_PATH ?>index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
                             <?php endif; ?>
                         </div>
 
@@ -530,3 +539,11 @@ $__avatarUrl  = $__avatarFile
         </div>
     </div>
     <!-- Navbar End -->
+
+    <!-- Marquee ticker (streetwear signature) -->
+    <div class="hdtt-ticker" aria-hidden="true">
+        <div class="hdtt-ticker-track">
+            <span>NEW DROP · SS26 · FREESHIP ĐƠN TỪ 500K · CHÍNH HÃNG 100% · ĐỔI TRẢ 7 NGÀY · HDTT® STORE · GIAO NHANH 1–3 NGÀY ·</span>
+            <span>NEW DROP · SS26 · FREESHIP ĐƠN TỪ 500K · CHÍNH HÃNG 100% · ĐỔI TRẢ 7 NGÀY · HDTT® STORE · GIAO NHANH 1–3 NGÀY ·</span>
+        </div>
+    </div>

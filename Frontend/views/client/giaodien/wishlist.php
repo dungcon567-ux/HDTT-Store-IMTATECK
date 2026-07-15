@@ -118,19 +118,19 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
                         <?php if ($catLabel): ?>
                             <span class="wl-cat"><?= htmlspecialchars($catLabel) ?></span>
                         <?php endif; ?>
-                        <a href="/Duan1/index.php?act=toggleWishlist&id=<?= (int)$p['product_id'] ?>&back=wishlist"
+                        <a href="<?= BASE_PATH ?>index.php?act=toggleWishlist&id=<?= (int)$p['product_id'] ?>&back=wishlist"
                            class="wl-remove" title="Bỏ khỏi yêu thích"
                            onclick="return confirm('Bỏ sản phẩm này khỏi yêu thích?');">
                             <i class="fas fa-heart"></i>
                         </a>
-                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
-                            <img src="/Duan1/uploads/<?= htmlspecialchars($p['image']) ?>"
+                        <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($p['image']) ?>"
                                  alt="<?= htmlspecialchars($p['product_name']) ?>" loading="lazy">
                         </a>
                     </div>
                     <div class="wl-body">
                         <h6 class="wl-name">
-                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                            <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
                                 <?= htmlspecialchars($p['product_name']) ?>
                             </a>
                         </h6>
@@ -150,7 +150,7 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
                             <?php endif; ?>
                         </div>
                         <div class="wl-actions">
-                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
+                            <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
                                class="wl-btn primary">
                                 <i class="fas fa-shopping-bag"></i> Xem & mua
                             </a>
@@ -164,11 +164,37 @@ $catNames = [1 => 'Áo', 2 => 'Quần', 3 => 'Giày'];
             <i class="far fa-heart"></i>
             <h3>Chưa có sản phẩm yêu thích</h3>
             <p>Bấm vào biểu tượng ❤️ trên sản phẩm bạn thích để lưu lại đây.</p>
-            <a href="/Duan1/index.php?act=giaodien" class="btn btn-primary rounded-pill px-4">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="btn btn-primary rounded-pill px-4">
                 <i class="fas fa-shopping-bag me-2"></i>Khám phá sản phẩm
             </a>
         </div>
     <?php endif; ?>
 </div>
+
+<!-- Dark Premium overrides for wishlist -->
+<style>
+    .wl-hero{background:var(--grad-soft) !important;border:1px solid var(--border-glow) !important}
+    .wl-hero h1{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .wl-hero p{color:var(--text-2) !important}
+    .wl-hero::after{color:var(--accent) !important;opacity:.18 !important}
+    .wl-count{background:var(--surface-2) !important;color:var(--accent-3) !important;border:1px solid var(--border-2) !important}
+    .wl-card{background:var(--surface) !important;border:1px solid var(--border) !important;backdrop-filter:blur(12px)}
+    .wl-card:hover{border-color:var(--border-glow) !important;box-shadow:0 20px 50px rgba(0,0,0,.5) !important}
+    .wl-img{background:var(--bg-3) !important}
+    .wl-cat{background:rgba(11,11,18,.82) !important;color:var(--text) !important;border:1px solid var(--border-2) !important}
+    .wl-remove{background:var(--surface-3) !important;color:var(--accent-3) !important}
+    .wl-remove:hover{background:var(--danger) !important;color:#fff !important}
+    .wl-name,.wl-name a{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .wl-name a:hover{color:var(--accent-2) !important}
+    .wl-price{color:transparent !important;background:var(--grad);-webkit-background-clip:text;background-clip:text;font-family:'Archivo',sans-serif !important}
+    .wl-price small{color:var(--text-3) !important}
+    .wl-stock.in{color:#6EE7B7 !important}
+    .wl-stock.out{color:#FDA4AF !important}
+    .wl-btn.primary{background:var(--grad) !important}
+    .wl-empty{background:var(--surface) !important;border:1px solid var(--border) !important}
+    .wl-empty i{color:var(--accent-3) !important;opacity:.5}
+    .wl-empty h3{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .wl-empty p{color:var(--text-2) !important}
+</style>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

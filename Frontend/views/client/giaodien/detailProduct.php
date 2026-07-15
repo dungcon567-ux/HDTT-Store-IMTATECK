@@ -299,9 +299,9 @@ if (isset($_SESSION['user_id'])) {
 
 <div class="pd-wrap">
     <nav class="pd-crumbs">
-        <a href="/Duan1/index.php?act=giaodien"><i class="fas fa-home"></i> Trang chủ</a>
+        <a href="<?= BASE_PATH ?>index.php?act=giaodien"><i class="fas fa-home"></i> Trang chủ</a>
         <span class="sep">/</span>
-        <a href="/Duan1/index.php?act=giaodien">Sản phẩm</a>
+        <a href="<?= BASE_PATH ?>index.php?act=giaodien">Sản phẩm</a>
         <span class="sep">/</span>
         <span class="current"><?= htmlspecialchars($firstVariant['product_name']) ?></span>
     </nav>
@@ -310,7 +310,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- LEFT: image -->
         <div class="pd-img-stage">
             <span class="pd-img-tag"><i class="fas fa-tag"></i> HDTT Store</span>
-            <img src="/Duan1/uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
+            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
                  class="pd-img"
                  alt="<?= htmlspecialchars($firstVariant['product_name']) ?>">
         </div>
@@ -354,7 +354,8 @@ if (isset($_SESSION['user_id'])) {
                 </div>
             </div>
 
-            <form method="POST" action="/Duan1/index.php?act=addToCart">
+            <form method="POST" action="<?= BASE_PATH ?>index.php?act=addToCart">
+                        <?= csrf_field() ?>
                 <input type="hidden" name="product_id" value="<?= (int)$firstVariant['product_id'] ?>">
 
                 <div class="pd-field">
@@ -390,7 +391,7 @@ if (isset($_SESSION['user_id'])) {
                     <?php if ($hasStock): ?>
                         <button type="submit" class="pd-btn cart"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ</button>
                         <button type="submit" class="pd-btn buy"><i class="fas fa-bolt"></i> Mua ngay</button>
-                        <a href="/Duan1/index.php?act=<?= isset($_SESSION['user_id']) ? 'toggleWishlist' : 'loginUser' ?>&id=<?= (int)$firstVariant['product_id'] ?>&back=detail"
+                        <a href="<?= BASE_PATH ?>index.php?act=<?= isset($_SESSION['user_id']) ? 'toggleWishlist' : 'loginUser' ?>&id=<?= (int)$firstVariant['product_id'] ?>&back=detail"
                            class="pd-btn-wish <?= $isFavorited ? 'on' : '' ?>"
                            title="<?= $isFavorited ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích' ?>">
                             <i class="<?= $isFavorited ? 'fas' : 'far' ?> fa-heart"></i>
@@ -426,7 +427,8 @@ if (isset($_SESSION['user_id'])) {
         </h3>
 
         <?php if (isset($_SESSION['user_id'])): ?>
-            <form method="POST" action="/Duan1/index.php?act=addComment" class="pd-cmt-form">
+            <form method="POST" action="<?= BASE_PATH ?>index.php?act=addComment" class="pd-cmt-form">
+                        <?= csrf_field() ?>
                 <input type="hidden" name="product_id" value="<?= (int)$firstVariant['product_id'] ?>">
 
                 <div class="pd-cmt-author">
@@ -454,7 +456,7 @@ if (isset($_SESSION['user_id'])) {
                 <i class="fas fa-lock lock"></i>
                 <h6>Vui lòng đăng nhập để bình luận</h6>
                 <p>Chia sẻ trải nghiệm của bạn với cộng đồng HDTT</p>
-                <a href="/Duan1/index.php?act=loginUser"><i class="fas fa-sign-in-alt"></i> Đăng nhập ngay</a>
+                <a href="<?= BASE_PATH ?>index.php?act=loginUser"><i class="fas fa-sign-in-alt"></i> Đăng nhập ngay</a>
             </div>
         <?php endif; ?>
 
@@ -494,9 +496,9 @@ if (isset($_SESSION['user_id'])) {
         <h3 class="pd-block-title"><i class="fas fa-th-large"></i> Có thể bạn cũng thích</h3>
         <div class="pd-rel-grid">
             <?php foreach ($relatedProducts as $rp): $rpStock = (int)($rp['total_stock'] ?? 0); ?>
-                <a href="/Duan1/index.php?act=detail&id=<?= (int)$rp['product_id'] ?>" class="pd-rel-card">
+                <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$rp['product_id'] ?>" class="pd-rel-card">
                     <div class="pd-rel-img">
-                        <img src="/Duan1/uploads/<?= htmlspecialchars($rp['image']) ?>"
+                        <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($rp['image']) ?>"
                              alt="<?= htmlspecialchars($rp['product_name']) ?>" loading="lazy">
                     </div>
                     <div class="pd-rel-body">
@@ -514,5 +516,95 @@ if (isset($_SESSION['user_id'])) {
     </div>
     <?php endif; ?>
 </div>
+
+<!-- Dark Premium overrides for product detail -->
+<style>
+    body{background:var(--bg) !important;color:var(--text) !important}
+    .pd-crumbs,.pd-crumbs a{color:var(--text-3) !important}
+    .pd-crumbs a:hover{color:var(--accent-2) !important}
+    .pd-crumbs .sep{color:var(--muted) !important}
+    .pd-crumbs .current{color:var(--text) !important}
+
+    .pd-img-stage{background:linear-gradient(135deg,var(--bg-2),var(--bg-3)) !important;border:1px solid var(--border) !important}
+    .pd-img-stage::before{background:radial-gradient(circle,rgba(216,255,0,.28),transparent 70%) !important}
+    .pd-img-tag{background:var(--grad) !important;color:#fff !important}
+
+    .pd-eyebrow{background:var(--grad-soft) !important;border:1px solid var(--border-glow) !important;color:#D8FF00 !important}
+    .pd-name{color:var(--text) !important;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+    .pd-rating{border-bottom:1px solid var(--border) !important}
+    .pd-rating-stars,.pd-cmt-stars{color:#FCD34D !important}
+    .pd-rating-num{color:var(--text) !important}
+    .pd-rating-meta{color:var(--text-3) !important}
+    .pd-price{color:transparent !important;background:var(--grad);-webkit-background-clip:text;background-clip:text;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+    .pd-price-range{color:var(--text-3) !important;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+
+    .pd-stock.ok{background:rgba(52,211,153,.15) !important;color:#6EE7B7 !important}
+    .pd-stock.no{background:rgba(251,113,133,.15) !important;color:#FDA4AF !important}
+
+    .pd-meta-item{background:var(--surface-2) !important;border:1px solid var(--border) !important}
+    .pd-meta-item i{background:var(--bg-3) !important;color:var(--accent-3) !important}
+    .pd-meta-item small{color:var(--text-3) !important}
+    .pd-meta-item span{color:var(--text) !important}
+
+    .pd-field-label{color:var(--text-2) !important}
+    .pd-select{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text) !important}
+    .pd-select:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(216,255,0,.2) !important}
+    .pd-select option{background:var(--bg-2);color:var(--text)}
+    .pd-qty-box{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important}
+    .pd-qty-btn{color:var(--text) !important}
+    .pd-qty-btn:hover{background:var(--accent) !important;color:#fff !important}
+    .pd-qty-input{color:var(--text) !important}
+
+    .pd-btn.cart{background:var(--surface-3) !important;color:#fff !important;border:1px solid var(--border-2) !important}
+    .pd-btn.cart:hover{background:var(--surface-3) !important;border-color:var(--border-glow) !important;box-shadow:0 8px 22px rgba(216,255,0,.3) !important}
+    .pd-btn.buy{background:var(--grad) !important;color:#fff !important}
+    .pd-btn.buy:hover{filter:brightness(1.1);color:#fff !important;box-shadow:0 10px 26px rgba(216,255,0,.5) !important}
+    .pd-btn.disabled{background:var(--surface) !important;color:var(--muted) !important}
+    .pd-btn-wish{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text-2) !important}
+    .pd-btn-wish:hover{border-color:var(--danger) !important;color:var(--danger) !important;background:var(--surface-3) !important}
+    .pd-btn-wish.on{background:var(--danger) !important;border-color:var(--danger) !important;color:#fff !important}
+
+    .pd-trust{border-top:1px solid var(--border) !important}
+    .pd-trust-item i{background:var(--surface-2) !important;color:var(--accent-3) !important}
+    .pd-trust-item div{color:var(--text-3) !important}
+
+    .pd-block{background:var(--surface) !important;border:1px solid var(--border) !important;backdrop-filter:blur(12px)}
+    .pd-block-title{color:var(--text) !important;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+    .pd-block-title i{color:var(--accent) !important}
+    .pd-block-title .pd-count{background:var(--grad) !important;color:#fff !important}
+    .pd-desc{color:var(--text-2) !important}
+
+    .pd-cmt-form{background:var(--surface-2) !important;border:1px dashed var(--border-2) !important}
+    .pd-cmt-avatar{background:var(--grad) !important;color:#fff !important}
+    .pd-cmt-author strong{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .pd-cmt-author small{color:var(--text-3) !important}
+    .pd-rating-input label{color:var(--border-2) !important}
+    .pd-rating-input input:checked ~ label,.pd-rating-input label:hover,.pd-rating-input label:hover ~ label{color:#FCD34D !important}
+    .pd-cmt-textarea{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text) !important}
+    .pd-cmt-textarea:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(216,255,0,.2) !important}
+    .pd-cmt-submit{background:var(--grad) !important;color:#fff !important}
+    .pd-cmt-submit:hover{filter:brightness(1.1)}
+
+    .pd-login-cta{background:var(--grad-soft) !important;border:1px dashed var(--border-glow) !important}
+    .pd-login-cta i.lock{color:var(--accent) !important}
+    .pd-login-cta h6{color:var(--text) !important;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+    .pd-login-cta p{color:var(--text-2) !important}
+    .pd-login-cta a{background:var(--grad) !important;color:#fff !important}
+
+    .pd-cmt-item{background:var(--surface-2) !important;border:1px solid var(--border) !important}
+    .pd-cmt-head strong{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .pd-cmt-stars .off{color:var(--border-2) !important}
+    .pd-cmt-time{color:var(--text-3) !important}
+    .pd-cmt-text{color:var(--text-2) !important}
+    .pd-cmt-empty,.pd-cmt-empty i{color:var(--text-3) !important}
+
+    .pd-rel-card{background:var(--surface) !important;border:1px solid var(--border) !important;color:inherit !important}
+    .pd-rel-card:hover{border-color:var(--border-glow) !important;box-shadow:0 16px 36px rgba(0,0,0,.5) !important}
+    .pd-rel-img{background:var(--bg-3) !important}
+    .pd-rel-name{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .pd-rel-price{color:transparent !important;background:var(--grad);-webkit-background-clip:text;background-clip:text;font-family:'Archivo',sans-serif !important;font-style:normal !important}
+    .pd-rel-stock.ok{color:#6EE7B7 !important}
+    .pd-rel-stock.no{color:#FDA4AF !important}
+</style>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

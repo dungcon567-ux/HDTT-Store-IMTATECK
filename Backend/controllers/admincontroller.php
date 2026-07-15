@@ -48,6 +48,7 @@ class admincontroller {
     }
 
     public function ProductUser() {
+        $this->requireAdmin();
         $productModel = new Product();
         $keyword = trim($_GET['keyword'] ?? '');
         $variants = $productModel->getAllVariants($keyword);
@@ -75,11 +76,19 @@ class admincontroller {
                 $errors[] = "Mật khẩu không được để trống.";
             }
 
+            $userModel = new User();
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
+            $lock = $userModel->loginLockRemaining($ip);
+            if ($lock > 0) {
+                $errors[] = "Đăng nhập sai quá nhiều lần. Thử lại sau " . ceil($lock / 60) . " phút.";
+            }
+
             if (empty($errors)) {
-                $userModel = new User();
                 $user = $userModel->login($username, $password);
 
                 if ($user) {
+                    $userModel->clearLoginThrottle($ip);
                     session_regenerate_id(true);
 
                     $_SESSION['user'] = $user['username'];
@@ -93,6 +102,7 @@ class admincontroller {
                     }
                     exit;
                 } else {
+                    $userModel->recordLoginFail($ip);
                     $error = "Sai tài khoản hoặc mật khẩu!";
                 }
             }
@@ -323,10 +333,16 @@ class admincontroller {
     }
 
     public function deleteUser() {
+        $this->requireAdmin();
         $id = $_GET['id'] ?? null;
 
         if (!$id || !is_numeric($id) || (int)$id <= 0) {
             echo "ID người dùng không hợp lệ!";
+            return;
+        }
+
+        if ((int)$id === (int)($_SESSION['user_id'] ?? 0)) {
+            echo "Không thể tự xóa tài khoản đang đăng nhập!";
             return;
         }
 
@@ -345,6 +361,7 @@ class admincontroller {
     }
 
     public function editUser() {
+        $this->requireAdmin();
         $id = $_GET['id'] ?? null;
 
         if (!$id || !is_numeric($id) || (int)$id <= 0) {

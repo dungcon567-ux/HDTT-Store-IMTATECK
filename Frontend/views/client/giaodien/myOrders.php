@@ -223,7 +223,7 @@ require_once __DIR__ . '/_header.php';
 
         <div class="ord-toolbar">
             <h3>Danh sách đơn hàng (<?= $statCount['total'] ?>)</h3>
-            <a href="/Duan1/index.php?act=giaodien" class="ord-back-btn">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="ord-back-btn">
                 <i class="fas fa-arrow-left"></i> Tiếp tục mua hàng
             </a>
         </div>
@@ -270,21 +270,21 @@ require_once __DIR__ . '/_header.php';
                     </div>
 
                     <div class="ord-card-foot">
-                        <a href="/Duan1/index.php?act=orderDetail&id=<?= $order['id'] ?>" class="ord-action primary">
+                        <a href="<?= BASE_PATH ?>index.php?act=orderDetail&id=<?= $order['id'] ?>" class="ord-action primary">
                             <i class="fas fa-eye"></i> Chi tiết
                         </a>
                         <?php if ($order['status'] === 'cho_xac_nhan'): ?>
-                            <a href="/Duan1/index.php?act=confirmOrder&id=<?= $order['id'] ?>" class="ord-action success">
+                            <a href="<?= BASE_PATH ?>index.php?act=confirmOrder&id=<?= $order['id'] ?>" class="ord-action success">
                                 <i class="fas fa-check-circle"></i> Hoàn tất
                             </a>
                         <?php endif; ?>
                         <?php if (in_array($order['status'], $editableInfo, true)): ?>
-                            <a href="/Duan1/index.php?act=editReceiverInfo&id=<?= $order['id'] ?>" class="ord-action warning">
+                            <a href="<?= BASE_PATH ?>index.php?act=editReceiverInfo&id=<?= $order['id'] ?>" class="ord-action warning">
                                 <i class="fas fa-user-edit"></i> Sửa địa chỉ
                             </a>
                         <?php endif; ?>
                         <?php if (in_array($order['status'], $cancelable, true)): ?>
-                            <a href="/Duan1/index.php?act=cancelOrder&id=<?= $order['id'] ?>"
+                            <a href="<?= BASE_PATH ?>index.php?act=cancelOrder&id=<?= $order['id'] ?>"
                                class="ord-action danger"
                                onclick="return confirm('Bạn có chắc muốn hủy đơn hàng #<?= (int)$order['id'] ?>? <?= $order['payment_method']!=='cod' && $order['payment_status']==='paid' ? 'Hệ thống sẽ xử lý hoàn tiền.' : 'Hành động này không thể hoàn tác.' ?>');">
                                 <i class="fas fa-times"></i> Hủy đơn
@@ -295,7 +295,7 @@ require_once __DIR__ . '/_header.php';
                             </button>
                         <?php endif; ?>
                         <?php if (in_array($order['status'], $reorderable, true)): ?>
-                            <a href="/Duan1/index.php?act=reorder&id=<?= $order['id'] ?>"
+                            <a href="<?= BASE_PATH ?>index.php?act=reorder&id=<?= $order['id'] ?>"
                                class="ord-action warning"
                                onclick="return confirm('Thêm các sản phẩm trong đơn này vào giỏ hàng?');">
                                 <i class="fas fa-redo"></i> Mua lại
@@ -310,11 +310,12 @@ require_once __DIR__ . '/_header.php';
             <i class="fas fa-box-open"></i>
             <h4>Bạn chưa có đơn hàng nào</h4>
             <p>Hãy bắt đầu hành trình mua sắm tại HDTT Store</p>
-            <a href="/Duan1/index.php?act=giaodien" class="ord-back-btn" style="background:var(--ed-rust);color:#fff;border-color:var(--ed-rust)">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="ord-back-btn" style="background:var(--ed-rust);color:#fff;border-color:var(--ed-rust)">
                 <i class="fas fa-shopping-bag"></i> Mua sắm ngay
             </a>
         </div>
     <?php endif; ?>
 </div>
 
+<?php require_once __DIR__ . '/_dark_editorial.php'; ?>
 <?php require_once __DIR__ . '/_footer.php'; ?>

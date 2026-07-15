@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+# Không index các khu vực riêng tư / thao tác
+Disallow: /*act=admin
+Disallow: /*act=adminProduct
+Disallow: /*act=login
+Disallow: /*act=cart
+Disallow: /*act=checkout
+Disallow: /*act=profile
+Disallow: /*act=myOrders
+Disallow: /*act=payGateway
+Disallow: /*act=resetPassword
+Disallow: /Backend/

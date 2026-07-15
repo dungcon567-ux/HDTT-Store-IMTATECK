@@ -4,7 +4,7 @@ $activeNav = 'profile';
 require_once __DIR__ . '/_header.php';
 
 $avatarUrl = !empty($user['avatar']) && file_exists(__DIR__ . '/../../../../uploads/' . $user['avatar'])
-    ? '/Duan1/uploads/' . htmlspecialchars($user['avatar'])
+    ? BASE_PATH . 'uploads/' . htmlspecialchars($user['avatar'])
     : null;
 $initial = strtoupper(mb_substr($user['username'], 0, 1));
 ?>
@@ -176,6 +176,7 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
             <div class="col-lg-4">
                 <div class="avatar-card">
                     <form method="POST" enctype="multipart/form-data" id="avatarForm">
+                        <?= csrf_field() ?>
                         <input type="hidden" name="action" value="update_info">
                         <input type="hidden" name="username" value="<?= htmlspecialchars($user['username']) ?>">
                         <input type="hidden" name="email"    value="<?= htmlspecialchars($user['email']) ?>">
@@ -221,13 +222,13 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
 
                 <div class="pro-card mt-4" style="padding:20px">
                     <h4 style="margin:0 0 12px;font-size:15px"><i class="fas fa-link text-primary me-2"></i>Liên kết nhanh</h4>
-                    <a href="/Duan1/index.php?act=myOrders" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569;transition:.2s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                    <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569;transition:.2s" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-box-open me-2 text-primary"></i> Đơn hàng của tôi
                     </a>
-                    <a href="/Duan1/index.php?act=cart" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
+                    <a href="<?= BASE_PATH ?>index.php?act=cart" class="d-block text-decoration-none mb-2 p-2 rounded" style="color:#475569" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-shopping-cart me-2 text-primary"></i> Giỏ hàng
                     </a>
-                    <a href="/Duan1/index.php?act=logout" class="d-block text-decoration-none p-2 rounded" style="color:#dc3545" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
+                    <a href="<?= BASE_PATH ?>index.php?act=logout" class="d-block text-decoration-none p-2 rounded" style="color:#dc3545" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='transparent'">
                         <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
                     </a>
                 </div>
@@ -256,6 +257,7 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
                             <p class="sub">Cập nhật thông tin cá nhân và liên hệ của bạn</p>
 
                             <form method="POST" enctype="multipart/form-data">
+                        <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="update_info">
 
                                 <div class="form-row mb-3">
@@ -299,6 +301,7 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
                             <p class="sub">Để bảo mật tài khoản, hãy chọn mật khẩu mạnh và không chia sẻ</p>
 
                             <form method="POST">
+                        <?= csrf_field() ?>
                                 <input type="hidden" name="action" value="change_password">
 
                                 <div class="mb-3">
@@ -327,5 +330,29 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
         </div>
     </div>
 </div>
+
+<!-- Dark Premium overrides for profile -->
+<style>
+    .profile-wrap{background:transparent !important}
+    .avatar-card,.pro-card{background:var(--surface) !important;border:1px solid var(--border) !important;box-shadow:var(--sh) !important;backdrop-filter:blur(12px)}
+    .avatar-img{background:var(--bg-2) !important}
+    .profile-name{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .profile-email{color:var(--text-3) !important}
+    .stats-row{border-top:1px solid var(--border) !important}
+    .stat .v{color:transparent !important;background:var(--grad);-webkit-background-clip:text;background-clip:text;font-family:'Archivo',sans-serif !important}
+    .stat .l{color:var(--text-3) !important}
+    .nav-pills-pro{background:var(--surface-2) !important}
+    .nav-pills-pro .nav-link{color:var(--text-2) !important}
+    .nav-pills-pro .nav-link.active{background:var(--bg-2) !important;color:#fff !important;box-shadow:0 4px 14px rgba(216,255,0,.25) !important}
+    .pro-card h4{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
+    .pro-card .sub{color:var(--text-3) !important}
+    .form-label-strong{color:var(--text-2) !important}
+    .form-control-pro{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text) !important}
+    .form-control-pro:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(216,255,0,.2) !important}
+    .btn-grad{background:var(--grad) !important;box-shadow:0 8px 22px rgba(216,255,0,.4) !important}
+    .btn-soft{background:var(--surface-2) !important;color:var(--text) !important}
+    .alert-pro.success{background:rgba(52,211,153,.12) !important;color:#A7F3D0 !important;border:1px solid rgba(52,211,153,.3) !important}
+    .alert-pro.error{background:rgba(251,113,133,.12) !important;color:#FECDD3 !important;border:1px solid rgba(251,113,133,.3) !important}
+</style>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

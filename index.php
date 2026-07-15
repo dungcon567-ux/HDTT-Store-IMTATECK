@@ -7,9 +7,33 @@ require_once './Backend/controllers/HomeController.php';
 require_once './Backend/models/Product.php';
 require_once './Backend/models/User.php';
 
+// ===== Security headers (chống clickjacking, sniff MIME, rò rỉ referrer) =====
+if (!headers_sent()) {
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-Content-Type-Options: nosniff');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header('X-XSS-Protection: 0');
+    header('Permissions-Policy: geolocation=(), microphone=(), camera=()');
+}
+
+// ===== Cookie phiên an toàn (phải đặt TRƯỚC session_start) =====
 if (session_status() === PHP_SESSION_NONE) {
+    $__https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (($_SERVER['SERVER_PORT'] ?? '') == 443);
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'httponly' => true,          // JS không đọc được cookie phiên -> giảm rủi ro XSS đánh cắp session
+        'secure'   => $__https,      // chỉ gửi qua HTTPS khi có HTTPS
+        'samesite' => 'Lax',         // giảm rủi ro CSRF
+    ]);
+    ini_set('session.use_strict_mode', '1');
     session_start();
 }
+
+// ===== Chong CSRF toan cuc: moi POST phai kem token hop le (_csrf) =====
+// Form nhung token bang ham csrf_field(). GET khong bi anh huong.
+csrf_check();
 
 $act = $_GET['act'] ?? '/';
 
@@ -36,6 +60,14 @@ switch ($act) {
         (new HomeController())->registerUser();
         break;
 
+    case 'forgotPassword':
+        (new HomeController())->forgotPassword();
+        break;
+
+    case 'resetPassword':
+        (new HomeController())->resetPassword();
+        break;
+
     case 'addToCart':
         (new HomeController())->addToCart();
         break;
@@ -50,6 +82,14 @@ switch ($act) {
 
     case 'deleteCart':
         (new HomeController())->deleteCart();
+        break;
+
+    case 'applyVoucher':
+        (new HomeController())->applyVoucher();
+        break;
+
+    case 'removeVoucher':
+        (new HomeController())->removeVoucher();
         break;
 
     case 'checkout':
@@ -206,6 +246,6 @@ switch ($act) {
         break;
     default:
         http_response_code(404);
-        echo '404 - Không tìm thấy trang';
+        require_once __DIR__ . '/Frontend/views/client/giaodien/404page.php';
         break;
 }

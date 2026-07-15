@@ -178,11 +178,21 @@ class HomeController
                 $errors[] = "Mật khẩu không được để trống.";
             }
 
+            $userModel = new User();
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+
+            // Chống brute-force: khóa tạm nếu sai quá nhiều lần
+            $lock = $userModel->loginLockRemaining($ip);
+            if ($lock > 0) {
+                $errors[] = "Bạn đã đăng nhập sai quá nhiều lần. Vui lòng thử lại sau "
+                          . ceil($lock / 60) . " phút.";
+            }
+
             if (empty($errors)) {
-                $userModel = new User();
                 $user = $userModel->login($email, $password);
 
                 if ($user) {
+                    $userModel->clearLoginThrottle($ip);
                     session_regenerate_id(true);
 
                     $_SESSION['user_id'] = $user['id'];
@@ -197,12 +207,101 @@ class HomeController
                     header("Location: index.php?act=giaodien");
                     exit;
                 } else {
+                    $userModel->recordLoginFail($ip);
                     $error = "Email hoặc mật khẩu không đúng!";
                 }
             }
         }
 
         require_once __DIR__ . '/../../Frontend/views/client/giaodien/loginUser.php';
+    }
+
+    /**
+     * Quên mật khẩu: nhận email, tạo token đặt lại (hết hạn 1 giờ),
+     * gửi email + hiện link (demo localhost). Luôn báo thành công để chống dò email.
+     */
+    public function forgotPassword()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $errors = [];
+        $done = false;
+        $resetLink = '';
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = trim($_POST['email'] ?? '');
+            if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = "Email không hợp lệ.";
+            }
+
+            if (empty($errors)) {
+                $userModel = new User();
+                $user = $userModel->findByEmail($email);
+
+                if ($user) {
+                    $token     = bin2hex(random_bytes(32));
+                    $tokenHash = hash('sha256', $token);
+                    $userModel->createPasswordReset($email, $tokenHash, time() + 3600);
+
+                    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+                    $resetLink = $scheme . '://' . $_SERVER['HTTP_HOST'] . BASE_PATH
+                        . 'index.php?act=resetPassword&token=' . $token . '&email=' . urlencode($email);
+
+                    // Cố gắng gửi email (có thể không chạy trên localhost nếu chưa cấu hình SMTP)
+                    @mail(
+                        $email,
+                        'Dat lai mat khau - HDTT Store',
+                        "Nhan vao link sau de dat lai mat khau (het han sau 1 gio):\n" . $resetLink,
+                        "From: no-reply@hdttstore.local"
+                    );
+                }
+                $done = true; // luôn báo thành công dù email có tồn tại hay không
+            }
+        }
+
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/forgotPassword.php';
+    }
+
+    /**
+     * Đặt lại mật khẩu bằng token hợp lệ.
+     */
+    public function resetPassword()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $errors  = [];
+        $success = false;
+        $token   = $_GET['token'] ?? $_POST['token'] ?? '';
+        $email   = trim($_GET['email'] ?? $_POST['email'] ?? '');
+
+        $userModel = new User();
+        $reset = $token ? $userModel->findValidReset(hash('sha256', $token)) : false;
+        $valid = $reset && strtolower($reset['email']) === strtolower($email);
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $password = $_POST['password'] ?? '';
+            $confirm  = $_POST['confirm_password'] ?? '';
+
+            if (!$valid) {
+                $errors[] = "Liên kết đặt lại không hợp lệ hoặc đã hết hạn.";
+            }
+            if (mb_strlen($password) < 6) {
+                $errors[] = "Mật khẩu phải có ít nhất 6 ký tự.";
+            }
+            if ($password !== $confirm) {
+                $errors[] = "Mật khẩu nhập lại không khớp.";
+            }
+
+            if (empty($errors)) {
+                $userModel->updatePasswordByEmail($reset['email'], password_hash($password, PASSWORD_DEFAULT));
+                $userModel->markResetUsed((int)$reset['id']);
+                $success = true;
+            }
+        } elseif (!$valid) {
+            $errors[] = "Liên kết đặt lại không hợp lệ hoặc đã hết hạn.";
+        }
+
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/resetPassword.php';
     }
 
     public function registerUser()
@@ -312,7 +411,53 @@ class HomeController
     $productModel = new Product();
     $cartItems = $productModel->getCartByUser($_SESSION['user_id']);
 
+    // Voucher đang áp (lưu trong session) — nạp lại từ DB để chắc còn hợp lệ
+    $appliedVoucher = null;
+    $voucherError   = $_SESSION['voucher_error'] ?? '';
+    unset($_SESSION['voucher_error']);
+    if (!empty($_SESSION['voucher_code'])) {
+        $appliedVoucher = $productModel->getVoucherByCode($_SESSION['voucher_code']);
+        if (!$appliedVoucher) {
+            unset($_SESSION['voucher_code']); // voucher hết hạn/hết lượt -> gỡ
+        }
+    }
+
     require_once __DIR__ . '/../../Frontend/views/client/giaodien/cart.php';
+    }
+
+    /** Áp mã giảm giá: lưu code vào session sau khi kiểm tra sơ bộ. */
+    public function applyVoucher()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $code = strtoupper(trim($_POST['voucher_code'] ?? ''));
+            $productModel = new Product();
+            $items = $productModel->getCartByUser($_SESSION['user_id']);
+            $subtotal = 0;
+            foreach ($items as $it) { $subtotal += $it['price'] * $it['quantity']; }
+
+            $v = $code !== '' ? $productModel->getVoucherByCode($code) : null;
+            if (!$v) {
+                $_SESSION['voucher_error'] = 'Mã không tồn tại, đã hết lượt hoặc hết hạn.';
+                unset($_SESSION['voucher_code']);
+            } elseif ($subtotal < (int)$v['min_order']) {
+                $_SESSION['voucher_error'] = 'Đơn tối thiểu ' . number_format($v['min_order']) . 'đ để dùng mã này.';
+                unset($_SESSION['voucher_code']);
+            } else {
+                $_SESSION['voucher_code'] = $code;
+            }
+        }
+        header('Location: index.php?act=cart');
+        exit;
+    }
+
+    /** Gỡ mã giảm giá khỏi session. */
+    public function removeVoucher()
+    {
+        $this->requireLogin();
+        unset($_SESSION['voucher_code'], $_SESSION['voucher_error']);
+        header('Location: index.php?act=cart');
+        exit;
     }
 
     public function updateCart()
@@ -400,7 +545,17 @@ class HomeController
         }
 
         $shippingFee = 30000;
-        $grandTotal = $subTotal + $shippingFee;
+
+        // Giảm giá voucher (tính lại trên sản phẩm đã chọn)
+        $discount = 0; $appliedVoucher = null;
+        if (!empty($_SESSION['voucher_code'])) {
+            $appliedVoucher = $productModel->getVoucherByCode($_SESSION['voucher_code']);
+            if ($appliedVoucher) {
+                $discount = calc_voucher_discount($appliedVoucher, $subTotal);
+            }
+        }
+
+        $grandTotal = max(0, $subTotal + $shippingFee - $discount);
 
         require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
     }
@@ -466,46 +621,76 @@ class HomeController
         }
 
         $shippingFee = 30000;
-        $grandTotal = $subTotal + $shippingFee;
+
+        // Voucher: tính lại giảm giá phía server trên sản phẩm đã chọn (không tin client)
+        $discount = 0; $voucherCode = null; $appliedVoucher = null;
+        if (!empty($_SESSION['voucher_code'])) {
+            $appliedVoucher = $productModel->getVoucherByCode($_SESSION['voucher_code']);
+            if ($appliedVoucher) {
+                $discount = calc_voucher_discount($appliedVoucher, $subTotal);
+                if ($discount > 0) {
+                    $voucherCode = $appliedVoucher['code'];
+                }
+            }
+        }
+
+        $grandTotal = max(0, $subTotal + $shippingFee - $discount);
 
         if (!empty($errors)) {
             require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
             return;
         }
 
-        $orderId = $productModel->createOrder([
-            'user_id' => $_SESSION['user_id'],
-            'total' => $grandTotal,
-            'status' => 'cho_xac_nhan',
-            'payment_status' => 'unpaid',
-            'online' => $paymentMethod === 'cod' ? 'no' : 'yes',
-            'receiver_name' => $receiverName,
-            'receiver_phone' => $receiverPhone,
-            'receiver_address' => $receiverAddress,
-            'shipping_fee' => $shippingFee,
-            'payment_method' => $paymentMethod,
-        ]);
+        // ===== Đặt hàng trong 1 transaction: tạo đơn + chi tiết + trừ kho + trừ voucher + xóa giỏ
+        // đều thành công hoặc rollback toàn bộ. Trừ kho nguyên tử chống bán vượt kho. =====
+        $productModel->beginTransaction();
+        try {
+            $orderId = $productModel->createOrder([
+                'user_id' => $_SESSION['user_id'],
+                'total' => $grandTotal,
+                'status' => 'cho_xac_nhan',
+                'payment_status' => 'unpaid',
+                'online' => $paymentMethod === 'cod' ? 'no' : 'yes',
+                'receiver_name' => $receiverName,
+                'receiver_phone' => $receiverPhone,
+                'receiver_address' => $receiverAddress,
+                'shipping_fee' => $shippingFee,
+                'payment_method' => $paymentMethod,
+                'discount' => $discount,
+                'voucher_code' => $voucherCode,
+            ]);
 
-        if (!$orderId) {
-            echo "Tạo đơn hàng thất bại!";
+            if (!$orderId) {
+                throw new Exception('Tạo đơn hàng thất bại.');
+            }
+
+            foreach ($checkoutItems as $item) {
+                // Trừ kho trước; nếu ai đó vừa mua hết trong lúc này -> báo lỗi, rollback.
+                if (!$productModel->updateVariantStock($item['variant_id'], $item['quantity'])) {
+                    throw new Exception('Sản phẩm "' . $item['product_name'] . '" vừa hết hàng, vui lòng thử lại.');
+                }
+                $productModel->addOrderDetail(
+                    $orderId,
+                    $item['variant_id'],
+                    $item['quantity'],
+                    $item['price']
+                );
+            }
+
+            // Trừ 1 lượt voucher (nếu áp dụng); hết lượt giữa chừng -> rollback
+            if ($voucherCode !== null && !$productModel->decrementVoucher($voucherCode)) {
+                throw new Exception('Mã giảm giá vừa hết lượt sử dụng, vui lòng thử lại.');
+            }
+
+            $productModel->removeManyCartItems($_SESSION['user_id'], $selectedCartIds);
+            $productModel->commit();
+            unset($_SESSION['voucher_code'], $_SESSION['voucher_error']); // dùng xong -> gỡ
+        } catch (Throwable $e) {
+            $productModel->rollback();
+            $errors[] = $e->getMessage();
+            require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
             return;
         }
-
-        foreach ($checkoutItems as $item) {
-            $productModel->addOrderDetail(
-                $orderId,
-                $item['variant_id'],
-                $item['quantity'],
-                $item['price']
-            );
-
-            $productModel->updateVariantStock(
-                $item['variant_id'],
-                $item['quantity']
-            );
-        }
-
-        $productModel->removeManyCartItems($_SESSION['user_id'], $selectedCartIds);
 
         if ($paymentMethod !== 'cod') {
             header("Location: index.php?act=payGateway&order_id={$orderId}");
@@ -576,7 +761,7 @@ class HomeController
         // Build return URL động dựa vào host hiện tại (hoạt động trên localhost + ngrok)
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $returnUrl = $scheme . '://' . $_SERVER['HTTP_HOST']
-            . '/Duan1/index.php?act=vnpayReturn';
+            . BASE_PATH . 'index.php?act=vnpayReturn';
 
         // Mã giao dịch duy nhất (order_id + 6 số cuối của timestamp)
         $vnp_TxnRef = $orderId . '_' . substr(time(), -6);

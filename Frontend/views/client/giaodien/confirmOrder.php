@@ -15,7 +15,7 @@ $transferNote = 'HDTT' . $order['id'];
 
 $qrStaticPath = __DIR__ . '/../../../../uploads/qr_zalopay.png';
 if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
-    $qrUrl = '/Duan1/uploads/qr_zalopay.png';
+    $qrUrl = BASE_PATH . 'uploads/qr_zalopay.png';
 } else {
     // Fallback: VietQR động (chuẩn NAPAS 247 - app nào cũng quét được)
     $qrUrl  = 'https://img.vietqr.io/image/MOMO-PSP2604910500000353-compact2.png'
@@ -31,7 +31,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
             <h2 class="mb-1"><i class="fas fa-clipboard-check text-primary me-2"></i>Hoàn tất đặt hàng <span class="text-muted">#<?= (int)$order['id'] ?></span></h2>
             <small class="text-muted">Kiểm tra và bổ sung thông tin trước khi xác nhận đơn hàng</small>
         </div>
-        <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
+        <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
             <i class="fas fa-arrow-left me-1"></i> Quay lại
         </a>
     </div>
@@ -46,7 +46,8 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <form method="POST" action="/Duan1/index.php?act=confirmOrder">
+            <form method="POST" action="<?= BASE_PATH ?>index.php?act=confirmOrder">
+                        <?= csrf_field() ?>
                 <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
 
                 <div class="card shadow-sm border-0 rounded-4 mb-3">
@@ -130,21 +131,21 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
                                 </div>
 
                                 <div class="col-md-7">
-                                    <div class="p-3 rounded-3" style="background:linear-gradient(135deg,#fff7f9,#ffe4ec);border:1px solid #fbcfe8">
-                                        <div class="fw-bold" style="color:#831843;font-size:15px">ĐỖ VIẾT DŨNG</div>
-                                        <div style="color:#9d174d;font-family:monospace;font-size:13px">STK: *******353</div>
+                                    <div class="p-3 rounded-3" style="background:var(--surface-2);border:1px solid var(--border-2)">
+                                        <div class="fw-bold" style="color:var(--text);font-size:15px">ĐỖ VIẾT DŨNG</div>
+                                        <div style="color:var(--text-2);font-family:monospace;font-size:13px">STK: *******353</div>
                                     </div>
 
-                                    <div class="mt-2 p-2 rounded-3" style="background:#f8f9fa">
+                                    <div class="mt-2 p-2 rounded-3" style="background:var(--surface-2)">
                                         <small class="text-muted d-block mb-1">Số tiền cần chuyển</small>
-                                        <div class="fw-bold text-danger" style="font-size:20px"><?= number_format($order['total']) ?>đ</div>
+                                        <div class="fw-bold" style="font-size:20px;color:#FDA4AF"><?= number_format($order['total']) ?>đ</div>
                                     </div>
 
-                                    <div class="mt-2 p-2 rounded-3" style="background:#fef3c7;border:1px dashed #f59e0b">
-                                        <small style="color:#92400e;font-weight:600">
+                                    <div class="mt-2 p-2 rounded-3" style="background:rgba(251,191,36,.12);border:1px dashed rgba(251,191,36,.35)">
+                                        <small style="color:#FDE68A;font-weight:600">
                                             <i class="fas fa-pen me-1"></i>Nội dung chuyển khoản:
                                         </small>
-                                        <div class="d-flex align-items-center gap-2 mt-1 px-2 py-1 rounded" style="background:#fff">
+                                        <div class="d-flex align-items-center gap-2 mt-1 px-2 py-1 rounded" style="background:var(--surface-3)">
                                             <code class="fw-bold" id="noteCopy"><?= htmlspecialchars($transferNote) ?></code>
                                             <button type="button" onclick="copyNote()"
                                                 class="btn btn-sm btn-warning ms-auto" style="padding:2px 8px;font-size:11px">
@@ -156,7 +157,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
                             </div>
 
                             <div class="mt-3 d-flex flex-wrap gap-2">
-                                <a href="/Duan1/index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>"
+                                <a href="<?= BASE_PATH ?>index.php?act=payGateway&order_id=<?= (int)$order['id'] ?>"
                                    class="btn btn-warning rounded-pill px-4 py-2 text-white fw-bold">
                                     <i class="fas fa-mobile-alt me-2"></i>Thanh toán ngay
                                 </a>
@@ -177,7 +178,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
                             <i class="fas fa-check-circle me-2"></i>Xác nhận đặt hàng
                         </button>
                     <?php endif; ?>
-                    <a href="/Duan1/index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                    <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                         Hủy
                     </a>
                 </div>
@@ -200,7 +201,7 @@ if ($order['payment_method'] === 'zalopay' && file_exists($qrStaticPath)) {
 
                     <?php foreach ($orderDetails as $item): ?>
                         <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="/Duan1/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
+                            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="text-muted small">

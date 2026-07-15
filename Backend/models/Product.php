@@ -12,6 +12,11 @@ class Product {
         $this->conn->set_charset("utf8mb4");
     }
 
+    // ===== Transaction helpers (dùng cho đặt hàng an toàn) =====
+    public function beginTransaction() { $this->conn->begin_transaction(); }
+    public function commit()           { $this->conn->commit(); }
+    public function rollback()         { $this->conn->rollback(); }
+
     // =========================
     // SẢN PHẨM GỐC
     // =========================
@@ -523,6 +528,8 @@ public function deleteProductSafe($productId) {
     }
 
     public function createOrder($data) {
+    $discount     = (int)($data['discount'] ?? 0);
+    $voucherCode  = $data['voucher_code'] ?? null;
     $sql = "INSERT INTO orders (
                 user_id,
                 total,
@@ -533,12 +540,14 @@ public function deleteProductSafe($productId) {
                 receiver_name,
                 receiver_phone,
                 receiver_address,
-                online
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                online,
+                discount,
+                voucher_code
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $this->conn->prepare($sql);
     $stmt->bind_param(
-        "iddsssssss",
+        "iddsssssssis",
         $data['user_id'],
         $data['total'],
         $data['shipping_fee'],
@@ -548,7 +557,9 @@ public function deleteProductSafe($productId) {
         $data['receiver_name'],
         $data['receiver_phone'],
         $data['receiver_address'],
-        $data['online']
+        $data['online'],
+        $discount,
+        $voucherCode
     );
 
     if ($stmt->execute()) {
@@ -557,6 +568,30 @@ public function deleteProductSafe($productId) {
 
     return false;
 }
+
+    // ===== VOUCHER / MÃ GIẢM GIÁ =====
+
+    /** Lấy voucher hợp lệ theo code (còn active, còn lượt, chưa hết hạn). */
+    public function getVoucherByCode($code) {
+        $sql = "SELECT * FROM vouchers
+                WHERE code = ? AND active = 1 AND quantity > 0
+                  AND (expires_at IS NULL OR expires_at > ?)
+                LIMIT 1";
+        $now = time();
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("si", $code, $now);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    /** Trừ 1 lượt dùng voucher (nguyên tử). Trả về true nếu trừ được. */
+    public function decrementVoucher($code) {
+        $sql = "UPDATE vouchers SET quantity = quantity - 1 WHERE code = ? AND quantity > 0";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $code);
+        $stmt->execute();
+        return $stmt->affected_rows === 1;
+    }
 
     public function addOrderDetail($orderId, $variantId, $quantity, $price) {
         $sql = "INSERT INTO order_details(order_id, variant_id, quantity, price)
@@ -567,12 +602,15 @@ public function deleteProductSafe($productId) {
     }
 
     public function updateVariantStock($variantId, $quantityBought) {
+        // Trừ kho nguyên tử: chỉ trừ khi còn đủ hàng. Trả về true CHỈ KHI
+        // thực sự có 1 dòng bị cập nhật (chống bán vượt kho khi mua song song).
         $sql = "UPDATE product_variants
                 SET stock = stock - ?
                 WHERE id = ? AND stock >= ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("iii", $quantityBought, $variantId, $quantityBought);
-        return $stmt->execute();
+        $stmt->execute();
+        return $stmt->affected_rows === 1;
     }
 
     // ========== WISHLIST ==========

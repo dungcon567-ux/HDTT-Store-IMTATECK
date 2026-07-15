@@ -43,6 +43,7 @@ require __DIR__ . '/../_layout_header.php';
         }
     ?>
     <form method="POST" enctype="multipart/form-data">
+                        <?= csrf_field() ?>
         <div class="field">
             <label>Tên sản phẩm <span class="mono" style="color:var(--text-mut);font-weight:500;font-size:11px;margin-left:4px">#<?= (int)$variant['product_id'] ?></span></label>
             <input type="text" name="product_name" value="<?= e_admin($currentProductName) ?>" required>

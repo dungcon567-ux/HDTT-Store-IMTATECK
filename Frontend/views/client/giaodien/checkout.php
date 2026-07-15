@@ -62,7 +62,8 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
 
     <div class="row g-4">
         <div class="col-lg-7">
-            <form method="POST" action="/Duan1/index.php?act=placeOrder">
+            <form method="POST" action="<?= BASE_PATH ?>index.php?act=placeOrder">
+                        <?= csrf_field() ?>
                 <?php foreach ($checkoutItems as $item): ?>
                     <input type="hidden" name="selected_cart[]" value="<?= $item['id'] ?>">
                 <?php endforeach; ?>
@@ -144,7 +145,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
                             <button type="submit" class="btn btn-primary rounded-pill px-4 py-2">
                                 <i class="fas fa-lock me-2"></i>Xác nhận đặt hàng
                             </button>
-                            <a href="/Duan1/index.php?act=cart" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                            <a href="<?= BASE_PATH ?>index.php?act=cart" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                                 Quay lại giỏ
                             </a>
                         </div>
@@ -160,7 +161,7 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
 
                     <?php foreach ($checkoutItems as $item): ?>
                         <div class="d-flex align-items-center border-bottom py-3">
-                            <img src="/Duan1/uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
+                            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($item['image'] ?? '') ?>" width="60" class="rounded me-3">
                             <div class="flex-grow-1">
                                 <div class="fw-bold"><?= htmlspecialchars($item['product_name']) ?></div>
                                 <div class="text-muted small">
@@ -184,6 +185,13 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
                             <span>Phí vận chuyển</span>
                             <strong><?= number_format($shippingFee) ?>đ</strong>
                         </div>
+                        <?php if (!empty($discount) && $discount > 0): ?>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="fas fa-ticket-alt" style="color:var(--accent)"></i>
+                                Mã <?= htmlspecialchars($appliedVoucher['code'] ?? '') ?></span>
+                            <strong style="color:#6EE7B7">−<?= number_format($discount) ?>đ</strong>
+                        </div>
+                        <?php endif; ?>
                         <div class="d-flex justify-content-between border-top pt-3">
                             <span class="fw-bold fs-5">Tổng cộng</span>
                             <strong class="text-danger fs-5"><?= number_format($grandTotal) ?>đ</strong>
@@ -194,5 +202,17 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
         </div>
     </div>
 </div>
+
+<!-- Dark Premium overrides for checkout -->
+<style>
+    .pay-card{background:var(--surface-2) !important;border:2px solid var(--border-2) !important}
+    .pay-card:hover{border-color:var(--border-glow) !important;box-shadow:0 6px 16px rgba(216,255,0,.15) !important}
+    .pay-card .pay-name{color:var(--text) !important}
+    .pay-card .pay-desc{color:var(--text-3) !important}
+    .pay-card .pay-check{border:2px solid var(--border-2) !important}
+    .pay-card:has(input:checked){border-color:var(--accent) !important;background:var(--grad-soft) !important}
+    .pay-card input:checked + .pay-logo + .pay-info + .pay-check{background:var(--accent) !important;border-color:var(--accent) !important}
+    .badge-demo{background:rgba(251,191,36,.16) !important;color:#FCD34D !important}
+</style>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

@@ -183,7 +183,7 @@ $isExpired    = $remainSec <= 0;
                 <div class="pay-items">
                     <?php foreach ($orderDetails as $it): ?>
                         <div class="pay-item">
-                            <img src="/Duan1/uploads/<?= htmlspecialchars($it['image']) ?>" alt="">
+                            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($it['image']) ?>" alt="">
                             <div>
                                 <div class="pay-item-name"><?= htmlspecialchars($it['product_name']) ?></div>
                                 <div class="pay-item-meta">
@@ -234,7 +234,8 @@ $isExpired    = $remainSec <= 0;
                     <span class="bank">QR Pay</span>
                 </div>
 
-                <form method="POST" action="/Duan1/index.php?act=vnpayCreate">
+                <form method="POST" action="<?= BASE_PATH ?>index.php?act=vnpayCreate">
+                        <?= csrf_field() ?>
                     <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
                     <button type="submit" class="vnp-btn" id="vnpBtn" <?= $isExpired ? 'disabled' : '' ?>>
                         <i class="fas fa-lock"></i>
@@ -259,7 +260,7 @@ $isExpired    = $remainSec <= 0;
                 </div>
 
                 <div style="text-align:center">
-                    <a href="/Duan1/index.php?act=myOrders" class="pay-cancel">
+                    <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="pay-cancel">
                         <i class="fas fa-times"></i> Hủy giao dịch
                     </a>
                 </div>
@@ -303,4 +304,5 @@ $isExpired    = $remainSec <= 0;
 })();
 </script>
 
+<?php require_once __DIR__ . '/_dark_editorial.php'; ?>
 <?php require_once __DIR__ . '/_footer.php'; ?>

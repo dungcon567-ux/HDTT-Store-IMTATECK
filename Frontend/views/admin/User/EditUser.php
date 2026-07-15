@@ -29,6 +29,7 @@ require __DIR__ . '/../_layout_header.php';
     <?php endif; ?>
 
     <form method="POST">
+                        <?= csrf_field() ?>
         <div class="field">
             <label>Tên đăng nhập</label>
             <input type="text" name="username" value="<?= e_admin($user['username']) ?>" required>

@@ -32,6 +32,7 @@ require __DIR__ . '/../_layout_header.php';
     <?php endif; ?>
 
     <form method="POST">
+                        <?= csrf_field() ?>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
             <div class="field">
                 <label>Tên sản phẩm</label>

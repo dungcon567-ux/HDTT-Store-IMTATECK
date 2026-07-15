@@ -296,10 +296,10 @@ require_once __DIR__ . '/_header.php';
                 <h1 class="hdtt-hero-title">Mặc đẹp. <span>Sống chất.</span><br>Mỗi ngày.</h1>
                 <p class="hdtt-hero-sub">Tủ đồ kể câu chuyện của bạn — chất liệu cao cấp, kiểu dáng hiện đại, không kén người mặc.</p>
                 <div class="hdtt-hero-cta">
-                    <a class="hdtt-hero-btn primary" href="/Duan1/index.php?act=giaodien#products">
+                    <a class="hdtt-hero-btn primary" href="<?= BASE_PATH ?>index.php?act=giaodien#products">
                         <i class="fas fa-shopping-bag"></i> Mua ngay
                     </a>
-                    <a class="hdtt-hero-btn ghost" href="/Duan1/index.php?act=giaodien#top-sellers">
+                    <a class="hdtt-hero-btn ghost" href="<?= BASE_PATH ?>index.php?act=giaodien#top-sellers">
                         <i class="fas fa-fire"></i> Xem hàng hot
                     </a>
                 </div>
@@ -418,18 +418,18 @@ require_once __DIR__ . '/_header.php';
                 <h2><i class="fas fa-th-large"></i>Mua sắm theo danh mục</h2>
                 <p>Chọn nhanh danh mục yêu thích của bạn</p>
             </div>
-            <a href="/Duan1/index.php?act=giaodien#products">
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien#products">
                 Xem tất cả <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         <div class="hdtt-cats-grid">
-            <a href="/Duan1/index.php?act=giaodien#products"
+            <a href="<?= BASE_PATH ?>index.php?act=giaodien#products"
                class="hdtt-cat all <?= $currentCategory === 0 ? 'active' : '' ?>">
                 <div class="hdtt-cat-icon"><i class="fas fa-grip"></i></div>
                 <p class="hdtt-cat-name">Tất cả</p>
             </a>
             <?php foreach ($categoryMap as $catId => $cat): ?>
-                <a href="/Duan1/index.php?act=giaodien&category=<?= $catId ?>#products"
+                <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=<?= $catId ?>#products"
                    class="hdtt-cat <?= $currentCategory === $catId ? 'active' : '' ?>">
                     <div class="hdtt-cat-icon"><i class="fas <?= $cat['icon'] ?>"></i></div>
                     <p class="hdtt-cat-name"><?= htmlspecialchars($cat['name']) ?></p>
@@ -455,7 +455,7 @@ require_once __DIR__ . '/_header.php';
                             Hiện có <b><?= $totalVariants ?></b> mẫu
                             <?= $currentCategoryName !== '' ? 'thuộc danh mục "' . htmlspecialchars($currentCategoryName) . '"' : 'đang bán' ?>
                             <?php if ($currentCategory > 0): ?>
-                                &middot; <a href="/Duan1/index.php?act=giaodien" class="text-decoration-none">
+                                &middot; <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="text-decoration-none">
                                     <i class="fas fa-times-circle"></i> Bỏ lọc
                                 </a>
                             <?php endif; ?>
@@ -623,7 +623,7 @@ require_once __DIR__ . '/_header.php';
                                     <div class="col-sm-6 col-lg-4 col-xl-3">
                                         <div class="pcard wow fadeInUp" data-wow-delay="0.1s">
                                             <div class="pcard-img">
-                                                <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                                <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($item['image']) ?>"
                                                      alt="<?= htmlspecialchars($item['product_name']) ?>"
                                                      loading="lazy">
 
@@ -633,7 +633,7 @@ require_once __DIR__ . '/_header.php';
                                                     <span class="pcard-tag new">Mới</span>
                                                 <?php endif; ?>
 
-                                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                                <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                                    class="pcard-eye" title="Xem nhanh">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
@@ -645,7 +645,7 @@ require_once __DIR__ . '/_header.php';
 
                                             <div class="pcard-body">
                                                 <h5 class="pcard-name">
-                                                    <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
+                                                    <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
                                                         <?= htmlspecialchars($item['product_name']) ?>
                                                     </a>
                                                 </h5>
@@ -679,7 +679,7 @@ require_once __DIR__ . '/_header.php';
                                                     <?php endif; ?>
                                                 </div>
 
-                                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                                <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                                    class="pcard-btn <?= !$hasStock ? 'disabled' : '' ?>">
                                                     <i class="fas fa-shopping-bag"></i> Xem chi tiết
                                                 </a>
@@ -703,7 +703,7 @@ require_once __DIR__ . '/_header.php';
                                 $params = ['act' => 'giaodien', 'page' => $p];
                                 if ($keyword !== '') $params['keyword'] = $keyword;
                                 if ($currentCategory > 0) $params['category'] = $currentCategory;
-                                return '/Duan1/index.php?' . http_build_query($params) . '#products';
+                                return BASE_PATH . 'index.php?' . http_build_query($params) . '#products';
                             };
                             $start = max(1, $page - 2);
                             $end   = min($totalPages, $page + 2);
@@ -801,14 +801,14 @@ require_once __DIR__ . '/_header.php';
                             <div class="col-sm-6 col-lg-4 col-xl-3">
                                 <div class="pcard wow fadeInUp" data-wow-delay="0.1s">
                                     <div class="pcard-img">
-                                        <img src="/Duan1/uploads/<?= htmlspecialchars($item['image']) ?>"
+                                        <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($item['image']) ?>"
                                              alt="<?= htmlspecialchars($item['product_name']) ?>" loading="lazy">
                                         <?php if (!$hasStock): ?>
                                             <span class="pcard-tag out">Hết hàng</span>
                                         <?php else: ?>
                                             <span class="pcard-tag new">Mới</span>
                                         <?php endif; ?>
-                                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                        <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                            class="pcard-eye"><i class="fas fa-eye"></i></a>
                                         <?php if ($catLabel): ?>
                                             <span class="pcard-cat cat-name-<?= $catId ?>"><?= htmlspecialchars($catLabel) ?></span>
@@ -816,7 +816,7 @@ require_once __DIR__ . '/_header.php';
                                     </div>
                                     <div class="pcard-body">
                                         <h5 class="pcard-name">
-                                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
+                                            <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>">
                                                 <?= htmlspecialchars($item['product_name']) ?>
                                             </a>
                                         </h5>
@@ -846,7 +846,7 @@ require_once __DIR__ . '/_header.php';
                                                 <i class="fas fa-times-circle"></i> Tạm hết hàng
                                             <?php endif; ?>
                                         </div>
-                                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
+                                        <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$item['product_id'] ?>"
                                            class="pcard-btn <?= !$hasStock ? 'disabled' : '' ?>">
                                             <i class="fas fa-shopping-bag"></i> Xem chi tiết
                                         </a>
@@ -1069,14 +1069,14 @@ require_once __DIR__ . '/_header.php';
                             <div class="tcard-fire"><i class="fas fa-fire"></i> Đã bán <?= $sold ?></div>
                         <?php endif; ?>
 
-                        <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>" class="tcard-img d-block">
-                            <img src="/Duan1/uploads/<?= htmlspecialchars($p['image']) ?>"
+                        <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>" class="tcard-img d-block">
+                            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($p['image']) ?>"
                                  alt="<?= htmlspecialchars($p['product_name']) ?>" loading="lazy">
                         </a>
 
                         <div class="tcard-body">
                             <h6 class="tcard-name">
-                                <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
+                                <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>">
                                     <?= htmlspecialchars($p['product_name']) ?>
                                 </a>
                             </h6>
@@ -1099,7 +1099,7 @@ require_once __DIR__ . '/_header.php';
                                 <?php endif; ?>
                             </div>
 
-                            <a href="/Duan1/index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
+                            <a href="<?= BASE_PATH ?>index.php?act=detail&id=<?= (int)$p['product_id'] ?>"
                                class="tcard-link">
                                 <i class="fas fa-shopping-bag"></i> Xem chi tiết
                             </a>
@@ -1165,5 +1165,132 @@ require_once __DIR__ . '/_header.php';
             </div>
         </div>
     </section>
+
+<!-- ============================================================
+     STREETWEAR BRUTALIST OVERRIDES (loaded last → wins cascade)
+     ============================================================ -->
+<style>
+    body{background:#000 !important;color:var(--text) !important}
+
+    /* ---------- HERO ---------- */
+    .hdtt-hero{
+        background:
+          linear-gradient(90deg, #000 0%, rgba(0,0,0,.72) 48%, rgba(0,0,0,.35) 100%),
+          url('img/banner.jpg') center/cover no-repeat !important;
+        position:relative;overflow:hidden;border-bottom:2px solid var(--border-2);
+    }
+    .hdtt-hero::before{
+        content:"" !important;position:absolute !important;inset:0 !important;pointer-events:none;
+        background:linear-gradient(0deg,rgba(216,255,0,.06),transparent 40%) !important;
+    }
+    .hdtt-hero-inner{position:relative;z-index:2}
+    .hdtt-hero-eyebrow{
+        background:var(--accent) !important;border:0 !important;border-radius:0 !important;
+        color:#000 !important;backdrop-filter:none !important;
+        font-family:'Space Mono',monospace !important;letter-spacing:.16em !important;font-weight:700 !important;
+    }
+    .hdtt-hero-eyebrow i{color:#000 !important}
+    .hdtt-hero-title{
+        color:#fff !important;font-family:'Anton',sans-serif !important;font-weight:400 !important;
+        text-transform:uppercase !important;letter-spacing:0 !important;line-height:.9 !important;
+        font-size:clamp(52px,8vw,104px) !important;
+        text-shadow:0 0 1px rgba(0,0,0,.4);
+    }
+    .hdtt-hero-title span{
+        background:none !important;color:var(--accent) !important;-webkit-text-fill-color:var(--accent) !important;
+        filter:none !important;-webkit-text-stroke:0;
+    }
+    .hdtt-hero-sub{color:var(--text-2) !important;font-family:'Space Mono',monospace !important;max-width:520px}
+    .hdtt-hero-btn{border-radius:0 !important;text-transform:uppercase;font-family:'Archivo';font-weight:900;letter-spacing:.05em}
+    .hdtt-hero-btn.primary{background:var(--accent) !important;box-shadow:none !important;border:2px solid var(--accent) !important;color:#000 !important}
+    .hdtt-hero-btn.primary:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 #000 !important;color:#000 !important}
+    .hdtt-hero-btn.ghost{background:transparent !important;border:2px solid #fff !important;color:#fff !important;backdrop-filter:none}
+    .hdtt-hero-btn.ghost:hover{background:#fff !important;color:#000 !important;transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent) !important}
+    .hdtt-hero-stat-num{color:var(--accent) !important;font-family:'Anton',sans-serif !important;-webkit-text-fill-color:var(--accent);background:none}
+    .hdtt-hero-stat-lbl{color:var(--text-3) !important;font-family:'Space Mono',monospace !important;letter-spacing:.1em}
+
+    /* ---------- TRUST STRIP ---------- */
+    .hdtt-trust{background:#000 !important;border-bottom:2px solid var(--border-2) !important;border-top:2px solid var(--border-2)}
+    .hdtt-trust-icon{border-radius:0 !important}
+    .hdtt-trust-icon.c1,.hdtt-trust-icon.c2,.hdtt-trust-icon.c3,.hdtt-trust-icon.c4{background:var(--accent) !important;color:#000 !important}
+    .hdtt-trust-text strong{color:var(--text) !important;text-transform:uppercase;font-family:'Archivo';font-weight:800}
+    .hdtt-trust-text small{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+
+    /* ---------- CATEGORIES ---------- */
+    .hdtt-cats-head h2{color:var(--text) !important;font-family:'Anton',sans-serif !important;text-transform:uppercase}
+    .hdtt-cats-head h2 i{color:var(--accent) !important}
+    .hdtt-cats-head p{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+    .hdtt-cats-head a{color:var(--accent) !important;font-family:'Space Mono',monospace;text-transform:uppercase}
+    .hdtt-cat{background:#0A0A0A !important;border:2px solid var(--border) !important;border-radius:0 !important;color:var(--text) !important;backdrop-filter:none;transition:transform .15s,border-color .15s,box-shadow .15s !important}
+    .hdtt-cat:hover{border-color:var(--accent) !important;color:var(--accent) !important;box-shadow:6px 6px 0 var(--accent) !important;transform:translate(-4px,-4px)}
+    .hdtt-cat.active{border-color:var(--accent) !important;background:#0A0A0A !important}
+    .hdtt-cat-icon{background:#000 !important;border:2px solid var(--border-2);border-radius:0 !important;color:var(--accent) !important}
+    .hdtt-cat:hover .hdtt-cat-icon{background:var(--accent) !important;color:#000 !important;border-color:var(--accent)}
+    .hdtt-cat.all .hdtt-cat-icon{background:#000 !important;color:var(--accent) !important}
+    .hdtt-cat.all:hover .hdtt-cat-icon{background:var(--accent) !important;color:#000 !important}
+    .hdtt-cat-name{color:inherit !important;text-transform:uppercase;font-family:'Archivo';font-weight:800}
+
+    /* ---------- PRODUCT SECTION ---------- */
+    .container-fluid.product{background:transparent !important}
+    .product h1{color:var(--text) !important;font-family:'Anton',sans-serif !important;text-transform:uppercase}
+    .product h1 .text-primary{background:none;color:var(--accent) !important;-webkit-text-fill-color:var(--accent)}
+    .product .text-muted{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+    .product .nav-pills .bg-light{background:#0A0A0A !important;border:2px solid var(--border-2)}
+    .product .nav-pills .active,.product .nav-pills .active .bg-light{background:var(--accent) !important;border-color:var(--accent)}
+    .product .nav-pills .text-dark{color:var(--text) !important;text-transform:uppercase;font-family:'Archivo';font-weight:800}
+    .product .nav-pills .active .text-dark{color:#000 !important}
+
+    /* ---------- PRODUCT CARD (.pcard) ---------- */
+    .pcard{
+        background:#0A0A0A !important;border:2px solid var(--border) !important;border-radius:0 !important;backdrop-filter:none;
+        transition:transform .15s, border-color .15s, box-shadow .15s !important;
+    }
+    .pcard:hover{transform:translate(-5px,-5px) !important;border-color:var(--accent) !important;box-shadow:9px 9px 0 var(--accent) !important}
+    .pcard-img{background:var(--bg-3) !important;border-bottom:2px solid var(--border)}
+    .pcard-img img{filter:grayscale(.2);transition:filter .3s,transform .5s}
+    .pcard:hover .pcard-img img{filter:grayscale(0)}
+    .pcard-name,.pcard-name a{color:var(--text) !important;font-family:'Archivo',sans-serif !important;font-weight:800;text-transform:uppercase}
+    .pcard-name a:hover{color:var(--accent) !important}
+    .pcard-price{color:var(--accent) !important;background:none;-webkit-text-fill-color:var(--accent);font-family:'Space Mono',monospace !important;font-weight:700}
+    .pcard-cat{color:var(--text-3) !important;font-family:'Space Mono',monospace;text-transform:uppercase}
+    .pcard-tag,.pcard-tag.new{background:var(--accent) !important;color:#000 !important;border:0 !important;border-radius:0 !important;font-family:'Space Mono',monospace;text-transform:uppercase}
+    .pcard-tag.out{background:var(--danger) !important;color:#fff !important}
+    .pcard-eye{background:#000 !important;color:var(--accent) !important;border:2px solid var(--border-2) !important;border-radius:0 !important;backdrop-filter:none}
+    .pcard-eye:hover{background:var(--accent) !important;color:#000 !important}
+    .pcard-rating-num{color:var(--text) !important;font-family:'Space Mono',monospace}
+    .pcard-rating-sold,.pcard-meta,.pcard-stock{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+    .pcard-btn{background:var(--accent) !important;color:#000 !important;border:2px solid var(--accent) !important;border-radius:0 !important;text-transform:uppercase;font-family:'Archivo';font-weight:900}
+    .pcard-btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 #000}
+
+    /* ---------- PAGINATION ---------- */
+    .hdtt-pager-info{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+    .hdtt-page{background:transparent !important;border:2px solid var(--border-2) !important;color:var(--text-2) !important;border-radius:0 !important;font-family:'Space Mono',monospace}
+    .hdtt-page:hover{background:#0A0A0A !important;color:var(--accent) !important;border-color:var(--accent) !important}
+    .hdtt-page.active{background:var(--accent) !important;color:#000 !important;border:2px solid var(--accent) !important}
+    .hdtt-page-arrow{background:transparent !important;border:2px solid var(--border-2) !important;color:var(--text-2) !important;border-radius:0 !important}
+    .hdtt-page-arrow:hover{background:var(--accent) !important;color:#000 !important;border-color:var(--accent)}
+
+    /* ---------- TOP SELLERS (.tcard) ---------- */
+    .top-title{color:var(--text) !important;font-family:'Anton',sans-serif !important;text-transform:uppercase}
+    .top-sub{color:var(--text-3) !important;font-family:'Space Mono',monospace !important}
+    .tcard{background:#0A0A0A !important;border:2px solid var(--border) !important;border-radius:0 !important;backdrop-filter:none;transition:transform .15s, border-color .15s, box-shadow .15s !important}
+    .tcard:hover{transform:translate(-4px,-4px) !important;border-color:var(--accent) !important;box-shadow:8px 8px 0 var(--accent) !important}
+    .tcard-name,.tcard-name a{color:var(--text) !important;font-family:'Archivo',sans-serif !important;font-weight:800;text-transform:uppercase}
+    .tcard-name a:hover{color:var(--accent) !important}
+    .tcard-sold,.tcard-stats{color:var(--text-3) !important;font-family:'Space Mono',monospace}
+    .tcard-price{color:var(--accent) !important;background:none;-webkit-text-fill-color:var(--accent);font-family:'Space Mono',monospace !important}
+    .tcard-link{background:var(--accent) !important;color:#000 !important;border:0 !important;border-radius:0 !important;text-transform:uppercase;font-family:'Archivo';font-weight:900}
+
+    /* ---------- CTA (newsletter) ---------- */
+    .hdtt-cta{background:var(--accent) !important;border:2px solid #000 !important;border-radius:0 !important;box-shadow:10px 10px 0 #0A0A0A}
+    .hdtt-cta::before,.hdtt-cta::after{display:none !important}
+    .hdtt-cta h3{color:#000 !important;font-family:'Anton',sans-serif !important;text-transform:uppercase}
+    .hdtt-cta h3 span{background:none !important;color:#000 !important;-webkit-text-fill-color:#000 !important;text-decoration:underline;text-decoration-thickness:4px}
+    .hdtt-cta p{color:#1a1a00 !important;font-family:'Space Mono',monospace;font-weight:700}
+    .hdtt-cta-form{background:#000 !important;border:2px solid #000 !important;border-radius:0 !important}
+    .hdtt-cta-form input{color:#fff !important;font-family:'Space Mono',monospace}
+    .hdtt-cta-form input::placeholder{color:#666 !important}
+    .hdtt-cta-form button{background:var(--accent) !important;color:#000 !important;border-radius:0 !important;text-transform:uppercase;font-family:'Archivo';font-weight:900}
+</style>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

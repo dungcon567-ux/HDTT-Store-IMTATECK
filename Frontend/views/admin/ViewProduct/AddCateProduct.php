@@ -34,6 +34,7 @@ require __DIR__ . '/../_layout_header.php';
     <?php endif; ?>
 
     <form method="POST" enctype="multipart/form-data">
+                        <?= csrf_field() ?>
         <div style="font-size:11px;color:var(--text-mut);text-transform:uppercase;letter-spacing:1.4px;font-weight:600;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">
             <i class="bi bi-card-list"></i> Thông tin cơ bản
         </div>
