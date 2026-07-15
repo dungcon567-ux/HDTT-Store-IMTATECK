@@ -67,6 +67,28 @@ class HomeController
         }
         $allProducts = array_values($grouped);
 
+        // ===== Lọc theo khoảng giá + sắp xếp =====
+        $priceMin = isset($_GET['pmin']) && $_GET['pmin'] !== '' ? (int)$_GET['pmin'] : null;
+        $priceMax = isset($_GET['pmax']) && $_GET['pmax'] !== '' ? (int)$_GET['pmax'] : null;
+        if ($priceMin !== null || $priceMax !== null) {
+            $allProducts = array_values(array_filter($allProducts, function ($p) use ($priceMin, $priceMax) {
+                if ($priceMin !== null && $p['min_price'] < $priceMin) return false;
+                if ($priceMax !== null && $p['min_price'] > $priceMax) return false;
+                return true;
+            }));
+        }
+        $sort = $_GET['sort'] ?? 'newest';
+        $allowedSort = ['newest','price_asc','price_desc','name'];
+        if (!in_array($sort, $allowedSort, true)) $sort = 'newest';
+        usort($allProducts, function ($a, $b) use ($sort) {
+            switch ($sort) {
+                case 'price_asc':  return $a['min_price'] <=> $b['min_price'];
+                case 'price_desc': return $b['min_price'] <=> $a['min_price'];
+                case 'name':       return strcasecmp($a['product_name'], $b['product_name']);
+                default:           return $b['product_id'] <=> $a['product_id']; // mới nhất
+            }
+        });
+
         $perPage = 8;
         $totalItems = count($allProducts);
         $totalPages = max(1, (int)ceil($totalItems / $perPage));
@@ -77,6 +99,98 @@ class HomeController
         $topSellers = $productModel->getTopSellingProducts(8);
 
         require_once __DIR__ . '/../../Frontend/views/client/giaodien/index.php';
+    }
+
+    /** Trang tĩnh: Liên hệ, Giới thiệu, Chính sách, FAQ, Điều khoản. */
+    public function page()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $allowed = ['contact','about','policy','faq','terms'];
+        $activePage = $_GET['p'] ?? 'contact';
+        if (!in_array($activePage, $allowed, true)) $activePage = 'contact';
+        $titles = [
+            'contact' => 'Liên hệ', 'about' => 'Giới thiệu',
+            'policy'  => 'Chính sách', 'faq' => 'Câu hỏi thường gặp', 'terms' => 'Điều khoản',
+        ];
+        $pageTitle = $titles[$activePage];
+        $contactSent = !empty($_SESSION['contact_sent']); unset($_SESSION['contact_sent']);
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/infoPage.php';
+    }
+
+    /** Nhận form liên hệ, lưu DB. */
+    public function contactSend()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $message = trim($_POST['message'] ?? '');
+            if ($name !== '' && filter_var($email, FILTER_VALIDATE_EMAIL) && $message !== '') {
+                try {
+                    $db = connectDB();
+                    $db->prepare("INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)")
+                       ->execute([$name, $email, $message]);
+                    $_SESSION['contact_sent'] = true;
+                } catch (Throwable $e) {}
+            }
+        }
+        header('Location: index.php?act=page&p=contact');
+        exit;
+    }
+
+    /** Đăng ký nhận bản tin (newsletter). */
+    public function subscribe()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = trim($_POST['email'] ?? '');
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $db = connectDB();
+                    $db->prepare("INSERT IGNORE INTO newsletter (email) VALUES (?)")->execute([$email]);
+                } catch (Throwable $e) {}
+                $_SESSION['newsletter_ok'] = true;
+            }
+        }
+        header('Location: index.php?act=giaodien#cta');
+        exit;
+    }
+
+    /** Thêm địa chỉ vào sổ địa chỉ. */
+    public function addAddress()
+    {
+        $this->requireLogin();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['receiver_name'] ?? '');
+            $phone = trim($_POST['receiver_phone'] ?? '');
+            $addr = trim($_POST['address'] ?? '');
+            if ($name !== '' && preg_match('/^[0-9]{9,11}$/', $phone) && $addr !== '') {
+                (new User())->addAddress((int)$_SESSION['user_id'], [
+                    'receiver_name' => $name, 'receiver_phone' => $phone,
+                    'address' => $addr, 'is_default' => !empty($_POST['is_default']) ? 1 : 0,
+                ]);
+            }
+        }
+        header('Location: index.php?act=profile#addresses');
+        exit;
+    }
+
+    public function deleteAddress()
+    {
+        $this->requireLogin();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id > 0) (new User())->deleteAddress($id, (int)$_SESSION['user_id']);
+        header('Location: index.php?act=profile#addresses');
+        exit;
+    }
+
+    public function setDefaultAddress()
+    {
+        $this->requireLogin();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id > 0) (new User())->setDefaultAddress($id, (int)$_SESSION['user_id']);
+        header('Location: index.php?act=profile#addresses');
+        exit;
     }
 
     public function detailProduct()
@@ -101,6 +215,14 @@ class HomeController
     }
 
     $firstVariant = $variants[0];
+
+    // Gallery: các ảnh khác nhau của sản phẩm (gom từ biến thể)
+    $gallery = [];
+    foreach ($variants as $item) {
+        if (!empty($item['image']) && !in_array($item['image'], $gallery, true)) {
+            $gallery[] = $item['image'];
+        }
+    }
 
     $colors = [];
     $sizes = [];
@@ -198,6 +320,19 @@ class HomeController
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['user']    = $user['username'];
                     $_SESSION['role']    = $user['role'];
+
+                    // Gộp giỏ hàng khách vãng lai (session) vào giỏ DB của user
+                    if (!empty($_SESSION['guest_cart'])) {
+                        $pm = new Product();
+                        foreach ($_SESSION['guest_cart'] as $vid => $qty) {
+                            $variant = $pm->getVariantById((int)$vid);
+                            if ($variant) {
+                                $addQty = min((int)$qty, (int)$variant['stock']);
+                                if ($addQty > 0) $pm->addToCart((int)$user['id'], (int)$vid, $addQty);
+                            }
+                        }
+                        unset($_SESSION['guest_cart']);
+                    }
 
                     if ($user['role'] === 'admin') {
                         header("Location: index.php?act=adminProduct");
@@ -368,7 +503,7 @@ class HomeController
 
     public function addToCart()
     {
-        $this->requireLogin();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header("Location: index.php?act=giaodien");
@@ -398,7 +533,15 @@ class HomeController
             return;
         }
 
-        $productModel->addToCart($_SESSION['user_id'], $variant['id'], $quantity);
+        if (isset($_SESSION['user_id'])) {
+            // Đã đăng nhập -> lưu vào DB
+            $productModel->addToCart($_SESSION['user_id'], $variant['id'], $quantity);
+        } else {
+            // Khách vãng lai -> lưu vào session (cộng dồn, không vượt tồn kho)
+            $vid = (int)$variant['id'];
+            $cur = (int)($_SESSION['guest_cart'][$vid] ?? 0);
+            $_SESSION['guest_cart'][$vid] = min($cur + $quantity, (int)$variant['stock']);
+        }
 
         header("Location: index.php?act=cart");
         exit;
@@ -406,10 +549,27 @@ class HomeController
 
     public function cart()
 {
-    $this->requireLogin();
+    if (session_status() === PHP_SESSION_NONE) session_start();
 
     $productModel = new Product();
-    $cartItems = $productModel->getCartByUser($_SESSION['user_id']);
+
+    if (isset($_SESSION['user_id'])) {
+        $cartItems = $productModel->getCartByUser($_SESSION['user_id']);
+    } else {
+        // Giỏ hàng khách vãng lai (từ session)
+        $cartItems = [];
+        $guest = $_SESSION['guest_cart'] ?? [];
+        if (!empty($guest)) {
+            $details = $productModel->getVariantsDetail(array_keys($guest));
+            foreach ($guest as $vid => $qty) {
+                if (!isset($details[(int)$vid])) continue; // biến thể đã ẩn/xoá
+                $row = $details[(int)$vid];
+                $row['id'] = (int)$vid;          // dùng variant_id làm id cho form update/delete
+                $row['quantity'] = (int)$qty;
+                $cartItems[] = $row;
+            }
+        }
+    }
 
     // Voucher đang áp (lưu trong session) — nạp lại từ DB để chắc còn hợp lệ
     $appliedVoucher = null;
@@ -462,7 +622,7 @@ class HomeController
 
     public function updateCart()
 {
-    $this->requireLogin();
+    if (session_status() === PHP_SESSION_NONE) session_start();
 
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         header("Location: index.php?act=cart");
@@ -478,6 +638,17 @@ class HomeController
     }
 
     $productModel = new Product();
+
+    // Khách vãng lai: cartId chính là variant_id, cập nhật trong session
+    if (!isset($_SESSION['user_id'])) {
+        $variant = $productModel->getVariantById($cartId);
+        if ($variant && isset($_SESSION['guest_cart'][$cartId])) {
+            $_SESSION['guest_cart'][$cartId] = min($quantity, (int)$variant['stock']);
+        }
+        header("Location: index.php?act=cart");
+        exit;
+    }
+
     $cartItem = $productModel->getCartItemById($cartId, $_SESSION['user_id']);
 
     if (!$cartItem) {
@@ -498,13 +669,16 @@ class HomeController
 
     public function deleteCart()
     {
-        $this->requireLogin();
+        if (session_status() === PHP_SESSION_NONE) session_start();
 
         $cartId = (int)($_GET['id'] ?? 0);
 
         if ($cartId > 0) {
-            $productModel = new Product();
-            $productModel->deleteCartItem($cartId, $_SESSION['user_id']);
+            if (isset($_SESSION['user_id'])) {
+                (new Product())->deleteCartItem($cartId, $_SESSION['user_id']);
+            } else {
+                unset($_SESSION['guest_cart'][$cartId]); // khách: id = variant_id
+            }
         }
 
         header("Location: index.php?act=cart");
@@ -556,6 +730,8 @@ class HomeController
         }
 
         $grandTotal = max(0, $subTotal + $shippingFee - $discount);
+
+        $addresses = $userModel->getAddresses($_SESSION['user_id']);
 
         require_once __DIR__ . '/../../Frontend/views/client/giaodien/checkout.php';
     }
@@ -1131,6 +1307,8 @@ class HomeController
             if ($o['payment_status'] === 'paid') $totalSpent += (int)$o['total'];
         }
 
+        $addresses = $userModel->getAddresses($userId);
+
         require_once __DIR__ . '/../../Frontend/views/client/giaodien/profile.php';
     }
 
@@ -1341,4 +1519,17 @@ class HomeController
 
     require_once __DIR__ . '/../../Frontend/views/client/giaodien/orderDetail.php';
 }
+
+    /** Hoá đơn dạng in (giấy trắng, thân thiện máy in). */
+    public function invoice()
+    {
+        $this->requireLogin();
+        $orderId = (int)($_GET['id'] ?? 0);
+        if ($orderId <= 0) { echo "ID đơn hàng không hợp lệ!"; return; }
+        $productModel = new Product();
+        $order = $productModel->getOrderByIdAndUser($orderId, $_SESSION['user_id']);
+        if (!$order) { echo "Không tìm thấy đơn hàng của bạn!"; return; }
+        $orderDetails = $productModel->getOrderDetails($orderId);
+        require_once __DIR__ . '/../../Frontend/views/client/giaodien/invoice.php';
+    }
 }

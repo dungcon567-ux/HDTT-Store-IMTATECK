@@ -285,9 +285,9 @@ $__avatarUrl  = $__avatarFile
         <div class="row gx-0 align-items-center">
             <div class="col-lg-4 text-center text-lg-start mb-lg-0">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
-                    <a href="#" class="text-muted me-2"> Trợ giúp</a><small> / </small>
-                    <a href="#" class="text-muted mx-2"> Hỗ trợ</a><small> / </small>
-                    <a href="#" class="text-muted ms-2"> Liên hệ</a>
+                    <a href="<?= BASE_PATH ?>index.php?act=page&p=faq" class="text-muted me-2"> Trợ giúp</a><small> / </small>
+                    <a href="<?= BASE_PATH ?>index.php?act=page&p=policy" class="text-muted mx-2"> Chính sách</a><small> / </small>
+                    <a href="<?= BASE_PATH ?>index.php?act=page&p=contact" class="text-muted ms-2"> Liên hệ</a>
                 </div>
             </div>
 
@@ -521,13 +521,15 @@ $__avatarUrl  = $__avatarFile
                     <div class="collapse navbar-collapse" id="navbarCollapse">
                         <div class="navbar-nav ms-auto py-0">
                             <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'home' ? 'active' : '' ?>">Trang chủ</a>
-                            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien#products" class="nav-item nav-link <?= ($activeNav ?? '') === 'shop' ? 'active' : '' ?>">Sản phẩm</a>
+                            <?php foreach ($categoryMap as $__cid => $__cat): ?>
+                                <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=<?= $__cid ?>#products"
+                                   class="nav-item nav-link <?= ($activeNav ?? '') === ('cat' . $__cid) ? 'active' : '' ?>"><?= htmlspecialchars($__cat['name']) ?></a>
+                            <?php endforeach; ?>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien#top-sellers" class="nav-item nav-link"><i class="fas fa-fire me-1" style="font-size:12px"></i>Hàng hot</a>
                             <?php if (isset($_SESSION['user_id'])): ?>
                                 <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="nav-item nav-link <?= ($activeNav ?? '') === 'orders' ? 'active' : '' ?>">Đơn hàng</a>
                                 <a href="<?= BASE_PATH ?>index.php?act=cart" class="nav-item nav-link <?= ($activeNav ?? '') === 'cart' ? 'active' : '' ?>">Giỏ hàng</a>
-                            <?php else: ?>
-                                <a href="<?= BASE_PATH ?>index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
-                                <a href="<?= BASE_PATH ?>index.php?act=registerUser" class="nav-item nav-link">Đăng ký</a>
                             <?php endif; ?>
                         </div>
 

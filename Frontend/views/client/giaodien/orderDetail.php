@@ -32,9 +32,14 @@ require_once __DIR__ . '/_header.php';
 <div class="container py-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0"><i class="fas fa-receipt me-2 text-primary"></i>Chi tiết đơn hàng #<?= $order['id'] ?></h2>
-        <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
-            <i class="fas fa-arrow-left me-1"></i> Quay lại
-        </a>
+        <div class="d-flex gap-2">
+            <a href="<?= BASE_PATH ?>index.php?act=invoice&id=<?= (int)$order['id'] ?>" target="_blank" class="btn btn-primary rounded-pill px-4" data-no-transition>
+                <i class="fas fa-print me-1"></i> In hoá đơn
+            </a>
+            <a href="<?= BASE_PATH ?>index.php?act=myOrders" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
     </div>
 
     <div class="row g-4">

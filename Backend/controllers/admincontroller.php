@@ -972,4 +972,58 @@ public function updateOrderStatus() {
     header("Location: index.php?act=donhang");
     exit;
     }
+
+    // ===== QUẢN LÝ VOUCHER =====
+    public function vouchers() {
+        $this->requireAdmin();
+        $productModel = new Product();
+        $errors = [];
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $code   = strtoupper(trim($_POST['code'] ?? ''));
+            $type   = ($_POST['type'] ?? 'percent') === 'fixed' ? 'fixed' : 'percent';
+            $value  = (int)($_POST['value'] ?? 0);
+            $minOrd = (int)($_POST['min_order'] ?? 0);
+            $maxDis = trim($_POST['max_discount'] ?? '');
+            $qty    = (int)($_POST['quantity'] ?? 0);
+
+            if ($code === '' || !preg_match('/^[A-Z0-9_]{3,50}$/', $code)) {
+                $errors[] = 'Mã chỉ gồm chữ HOA/số/_ , dài 3–50 ký tự.';
+            } elseif ($productModel->voucherCodeExists($code)) {
+                $errors[] = 'Mã "' . $code . '" đã tồn tại.';
+            }
+            if ($value <= 0) $errors[] = 'Giá trị giảm phải > 0.';
+            if ($type === 'percent' && $value > 100) $errors[] = 'Giảm theo % không được vượt 100.';
+            if ($qty <= 0) $errors[] = 'Số lượt phải > 0.';
+
+            if (empty($errors)) {
+                $productModel->createVoucher([
+                    'code' => $code, 'type' => $type, 'value' => $value,
+                    'min_order' => $minOrd, 'max_discount' => $maxDis, 'quantity' => $qty,
+                    'expires_at' => null,
+                ]);
+                header('Location: index.php?act=vouchers');
+                exit;
+            }
+        }
+
+        $vouchers = $productModel->getAllVouchers();
+        require_once __DIR__ . '/../../Frontend/views/admin/ViewProduct/vouchers.php';
+    }
+
+    public function deleteVoucher() {
+        $this->requireAdmin();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id > 0) (new Product())->deleteVoucherById($id);
+        header('Location: index.php?act=vouchers');
+        exit;
+    }
+
+    public function toggleVoucher() {
+        $this->requireAdmin();
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id > 0) (new Product())->toggleVoucher($id);
+        header('Location: index.php?act=vouchers');
+        exit;
+    }
 }

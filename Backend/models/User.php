@@ -275,6 +275,41 @@ class User
         return $stmt->execute([$newHash, $email]);
     }
 
+    // ===== SỔ ĐỊA CHỈ =====
+
+    public function getAddresses(int $userId): array
+    {
+        $stmt = $this->conn->prepare("SELECT * FROM addresses WHERE user_id = ? ORDER BY is_default DESC, id DESC");
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
+
+    public function addAddress(int $userId, array $d): bool
+    {
+        // Nếu là địa chỉ mặc định đầu tiên (chưa có địa chỉ nào) -> tự đặt mặc định
+        $count = $this->conn->prepare("SELECT COUNT(*) FROM addresses WHERE user_id = ?");
+        $count->execute([$userId]);
+        $isDefault = ((int)$count->fetchColumn() === 0) ? 1 : (int)($d['is_default'] ?? 0);
+        if ($isDefault) {
+            $this->conn->prepare("UPDATE addresses SET is_default = 0 WHERE user_id = ?")->execute([$userId]);
+        }
+        $stmt = $this->conn->prepare("INSERT INTO addresses (user_id, receiver_name, receiver_phone, address, is_default) VALUES (?, ?, ?, ?, ?)");
+        return $stmt->execute([$userId, $d['receiver_name'], $d['receiver_phone'], $d['address'], $isDefault]);
+    }
+
+    public function deleteAddress(int $id, int $userId): bool
+    {
+        $stmt = $this->conn->prepare("DELETE FROM addresses WHERE id = ? AND user_id = ?");
+        return $stmt->execute([$id, $userId]);
+    }
+
+    public function setDefaultAddress(int $id, int $userId): bool
+    {
+        $this->conn->prepare("UPDATE addresses SET is_default = 0 WHERE user_id = ?")->execute([$userId]);
+        $stmt = $this->conn->prepare("UPDATE addresses SET is_default = 1 WHERE id = ? AND user_id = ?");
+        return $stmt->execute([$id, $userId]);
+    }
+
     // ===== HÀM USER CONTROLLER nhé các bạn =====
 
     public function getAllUsers(): array

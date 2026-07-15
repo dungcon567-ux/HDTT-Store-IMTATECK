@@ -307,13 +307,39 @@ if (isset($_SESSION['user_id'])) {
     </nav>
 
     <div class="pd-main">
-        <!-- LEFT: image -->
-        <div class="pd-img-stage">
-            <span class="pd-img-tag"><i class="fas fa-tag"></i> HDTT Store</span>
-            <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
-                 class="pd-img"
-                 alt="<?= htmlspecialchars($firstVariant['product_name']) ?>">
+        <!-- LEFT: image gallery -->
+        <div>
+            <div class="pd-img-stage">
+                <span class="pd-img-tag"><i class="fas fa-tag"></i> HDTT Store</span>
+                <img loading="lazy" id="pdMainImg" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($firstVariant['image']) ?>"
+                     class="pd-img"
+                     alt="<?= htmlspecialchars($firstVariant['product_name']) ?>">
+            </div>
+            <?php if (count($gallery) > 1): ?>
+            <div class="pd-thumbs">
+                <?php foreach ($gallery as $gi => $img): ?>
+                    <button type="button" class="pd-thumb <?= $gi === 0 ? 'active' : '' ?>"
+                            data-img="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($img) ?>" onclick="pdSwitchImg(this)">
+                        <img loading="lazy" src="<?= BASE_PATH ?>uploads/<?= htmlspecialchars($img) ?>" alt="">
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
+        <style>
+            .pd-thumbs{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+            .pd-thumb{width:74px;height:74px;padding:0;border:2px solid var(--border-2);background:var(--bg-3);cursor:pointer;overflow:hidden;transition:border-color .12s,box-shadow .12s,transform .12s;border-radius:0}
+            .pd-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+            .pd-thumb:hover{border-color:var(--accent)}
+            .pd-thumb.active{border-color:var(--accent);box-shadow:3px 3px 0 var(--accent)}
+        </style>
+        <script>
+            function pdSwitchImg(btn){
+                document.getElementById('pdMainImg').src = btn.dataset.img;
+                document.querySelectorAll('.pd-thumb').forEach(function(t){t.classList.remove('active')});
+                btn.classList.add('active');
+            }
+        </script>
 
         <!-- RIGHT: info + form -->
         <div class="pd-info">

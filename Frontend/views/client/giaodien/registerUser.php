@@ -35,7 +35,7 @@
         <div class="row gx-0 align-items-center">
             <div class="col-lg-4 text-center text-lg-start mb-lg-0">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
-                    <a href="index.php?act=giaodien" class="text-muted me-2">Trang chủ</a>
+                    <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="text-muted me-2">Trang chủ</a>
                     <small> / </small>
                     <a href="#" class="text-muted mx-2">Hỗ trợ</a>
                     <small> / </small>
@@ -48,7 +48,7 @@
             </div>
             <div class="col-lg-4 text-center text-lg-end">
                 <div class="d-inline-flex align-items-center" style="height: 45px;">
-                    <a href="index.php?act=loginUser" class="text-muted ms-2">
+                    <a href="<?= BASE_PATH ?>index.php?act=loginUser" class="text-muted ms-2">
                         <small><i class="fa fa-sign-in-alt me-2"></i>Đăng nhập</small>
                     </a>
                 </div>
@@ -60,7 +60,7 @@
         <div class="row gx-0 align-items-center text-center">
             <div class="col-md-4 col-lg-3 text-center text-lg-start">
                 <div class="d-inline-flex align-items-center">
-                    <a href="index.php?act=giaodien" class="navbar-brand p-0">
+                    <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="navbar-brand p-0">
                         <h1 class="display-5 text-primary m-0">
                             <i class="fas fa-shopping-bag text-secondary me-2"></i>HDTT Store
                         </h1>
@@ -97,9 +97,12 @@
                 <nav class="navbar navbar-expand-lg navbar-light bg-primary">
                     <div class="collapse navbar-collapse show">
                         <div class="navbar-nav ms-auto py-0">
-                            <a href="index.php?act=giaodien" class="nav-item nav-link">Trang chủ</a>
-                            <a href="index.php?act=loginUser" class="nav-item nav-link">Đăng nhập</a>
-                            <a href="#" class="nav-item nav-link active">Đăng ký</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="nav-item nav-link">Trang chủ</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien#products" class="nav-item nav-link">Sản phẩm</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=1#products" class="nav-item nav-link">Áo</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=2#products" class="nav-item nav-link">Quần</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien&category=3#products" class="nav-item nav-link">Giày</a>
+                            <a href="<?= BASE_PATH ?>index.php?act=giaodien#top-sellers" class="nav-item nav-link"><i class="fas fa-fire me-1" style="font-size:12px"></i>Hàng hot</a>
                         </div>
                         <a href="#" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3">
                             <i class="fa fa-mobile-alt me-2"></i>0866914326

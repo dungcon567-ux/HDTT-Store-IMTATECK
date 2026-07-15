@@ -167,6 +167,20 @@
         }
     }
 
+    /* -------- 6b. Make the WHOLE product card clickable -------- */
+    // Click anywhere on a card (not on a real control) opens its detail link.
+    document.addEventListener('click', function (e) {
+        // Real controls (links, buttons, forms, inputs) handle their own click.
+        if (e.target.closest('a, button, form, input, select, label, .pcard-eye')) return;
+        var card = e.target.closest('.pcard, .tcard, .hdtt-pcard, .wl-card');
+        if (!card) return;
+        var link = card.querySelector('a[href*="act=detail"]');
+        if (link) {
+            e.preventDefault();
+            link.click(); // reuse the smooth page-transition handler
+        }
+    });
+
     /* -------- 7. Tilt / spotlight on product cards -------- */
     document.addEventListener('mousemove', function (e) {
         var card = e.target.closest ? e.target.closest('.hdtt-pcard') : null;

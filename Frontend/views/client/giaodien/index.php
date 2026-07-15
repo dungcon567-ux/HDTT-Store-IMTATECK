@@ -461,24 +461,25 @@ require_once __DIR__ . '/_header.php';
                             <?php endif; ?>
                         </p>
                     </div>
-                    <div class="col-lg-6 text-end wow fadeInRight" data-wow-delay="0.1s">
-                        <ul class="nav nav-pills d-inline-flex text-center mb-0">
-                            <li class="nav-item">
-                                <a class="d-flex mx-2 py-2 bg-light rounded-pill active" data-bs-toggle="pill" href="#tab-1">
-                                    <span class="text-dark px-3">Tất cả</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="d-flex py-2 mx-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-2">
-                                    <span class="text-dark px-3">Mới về</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="d-flex mx-2 py-2 bg-light rounded-pill" data-bs-toggle="pill" href="#tab-3">
-                                    <span class="text-dark px-3">Còn hàng</span>
-                                </a>
-                            </li>
-                        </ul>
+                    <div class="col-lg-6 text-lg-end wow fadeInRight" data-wow-delay="0.1s">
+                        <?php $__sort = $_GET['sort'] ?? 'newest'; ?>
+                        <form method="GET" action="<?= BASE_PATH ?>index.php#products"
+                              class="hdtt-filterbar d-inline-flex flex-wrap gap-2 justify-content-lg-end align-items-center">
+                            <input type="hidden" name="act" value="giaodien">
+                            <?php if (!empty($_GET['keyword'])): ?><input type="hidden" name="keyword" value="<?= htmlspecialchars($_GET['keyword']) ?>"><?php endif; ?>
+                            <?php if ($currentCategory > 0): ?><input type="hidden" name="category" value="<?= (int)$currentCategory ?>"><?php endif; ?>
+                            <input type="number" name="pmin" class="form-control" placeholder="Giá từ" min="0" step="10000"
+                                   value="<?= htmlspecialchars($_GET['pmin'] ?? '') ?>" style="width:112px">
+                            <input type="number" name="pmax" class="form-control" placeholder="đến" min="0" step="10000"
+                                   value="<?= htmlspecialchars($_GET['pmax'] ?? '') ?>" style="width:100px">
+                            <select name="sort" class="form-select" style="width:auto">
+                                <option value="newest"    <?= $__sort==='newest'?'selected':'' ?>>Mới nhất</option>
+                                <option value="price_asc" <?= $__sort==='price_asc'?'selected':'' ?>>Giá thấp → cao</option>
+                                <option value="price_desc"<?= $__sort==='price_desc'?'selected':'' ?>>Giá cao → thấp</option>
+                                <option value="name"      <?= $__sort==='name'?'selected':'' ?>>Tên A–Z</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-sliders-h me-1"></i>Lọc</button>
+                        </form>
                     </div>
                 </div>
 
@@ -703,6 +704,9 @@ require_once __DIR__ . '/_header.php';
                                 $params = ['act' => 'giaodien', 'page' => $p];
                                 if ($keyword !== '') $params['keyword'] = $keyword;
                                 if ($currentCategory > 0) $params['category'] = $currentCategory;
+                                if (!empty($_GET['sort'])) $params['sort'] = $_GET['sort'];
+                                if (isset($_GET['pmin']) && $_GET['pmin'] !== '') $params['pmin'] = $_GET['pmin'];
+                                if (isset($_GET['pmax']) && $_GET['pmax'] !== '') $params['pmax'] = $_GET['pmax'];
                                 return BASE_PATH . 'index.php?' . http_build_query($params) . '#products';
                             };
                             $start = max(1, $page - 2);
@@ -1153,13 +1157,17 @@ require_once __DIR__ . '/_header.php';
         }
         .hdtt-cta-form button:hover{transform:translateY(-1px)}
     </style>
-    <section class="hdtt-cta">
+    <section class="hdtt-cta" id="cta">
         <div class="container">
             <div class="hdtt-cta-inner">
                 <h3>Đăng ký nhận <span>ưu đãi mới nhất</span></h3>
                 <p>Nhận thông báo sản phẩm mới, mã giảm giá độc quyền và xu hướng thời trang mỗi tuần.</p>
-                <form class="hdtt-cta-form" onsubmit="event.preventDefault(); this.querySelector('input').value=''; alert('Cảm ơn bạn đã đăng ký!');">
-                    <input type="email" placeholder="Nhập email của bạn..." required>
+                <?php if (!empty($_SESSION['newsletter_ok'])): unset($_SESSION['newsletter_ok']); ?>
+                    <div class="alert alert-success" style="max-width:480px;margin:0 auto 14px"><i class="fas fa-check-circle me-1"></i> Cảm ơn bạn đã đăng ký nhận bản tin!</div>
+                <?php endif; ?>
+                <form class="hdtt-cta-form" method="POST" action="<?= BASE_PATH ?>index.php?act=subscribe">
+                    <?= csrf_field() ?>
+                    <input type="email" name="email" placeholder="Nhập email của bạn..." required>
                     <button type="submit"><i class="fas fa-paper-plane me-2"></i>Đăng ký</button>
                 </form>
             </div>
@@ -1263,12 +1271,25 @@ require_once __DIR__ . '/_header.php';
     .pcard-btn:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 #000}
 
     /* ---------- PAGINATION ---------- */
-    .hdtt-pager-info{color:var(--text-3) !important;font-family:'Space Mono',monospace}
-    .hdtt-page{background:transparent !important;border:2px solid var(--border-2) !important;color:var(--text-2) !important;border-radius:0 !important;font-family:'Space Mono',monospace}
-    .hdtt-page:hover{background:#0A0A0A !important;color:var(--accent) !important;border-color:var(--accent) !important}
-    .hdtt-page.active{background:var(--accent) !important;color:#000 !important;border:2px solid var(--accent) !important}
-    .hdtt-page-arrow{background:transparent !important;border:2px solid var(--border-2) !important;color:var(--text-2) !important;border-radius:0 !important}
-    .hdtt-page-arrow:hover{background:var(--accent) !important;color:#000 !important;border-color:var(--accent)}
+    .hdtt-pager{border-top:2px solid var(--border-2) !important;margin-top:44px !important;padding-top:26px !important}
+    .hdtt-pager-info{color:var(--text-3) !important;font-family:'Space Mono',monospace;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+    .hdtt-pager-info b{color:var(--accent) !important}
+    .hdtt-pager-info i{color:var(--accent) !important}
+    /* bỏ hộp bọc bo tròn nền sáng */
+    .hdtt-pager-list{background:transparent !important;box-shadow:none !important;border-radius:0 !important;padding:0 !important;gap:8px !important}
+    .hdtt-page{
+        min-width:44px !important;height:44px !important;padding:0 12px !important;
+        background:#0A0A0A !important;border:2px solid var(--border-2) !important;color:var(--text) !important;
+        border-radius:0 !important;font-family:'Space Mono',monospace;font-weight:700 !important;
+        transition:transform .12s,box-shadow .12s,background .12s,color .12s,border-color .12s !important;
+    }
+    .hdtt-page:hover{background:#0A0A0A !important;color:var(--accent) !important;border-color:var(--accent) !important;transform:translate(-2px,-2px);box-shadow:3px 3px 0 var(--accent) !important}
+    .hdtt-page.active{background:var(--accent) !important;color:#000 !important;border:2px solid var(--accent) !important;transform:none !important;box-shadow:none !important}
+    .hdtt-page.active:hover{color:#000 !important;transform:translate(-2px,-2px);box-shadow:3px 3px 0 #000 !important}
+    .hdtt-page.dots{background:transparent !important;border:0 !important;color:var(--text-3) !important;box-shadow:none !important;transform:none !important;cursor:default;min-width:auto !important}
+    .hdtt-page.disabled{opacity:.3 !important;pointer-events:none;box-shadow:none !important;transform:none !important}
+    .hdtt-page-arrow{width:44px !important;height:44px !important;padding:0 !important;background:#0A0A0A !important;border:2px solid var(--border-2) !important;color:var(--text) !important;border-radius:0 !important}
+    .hdtt-page-arrow:hover{background:var(--accent) !important;color:#000 !important;border-color:var(--accent) !important;transform:translate(-2px,-2px);box-shadow:3px 3px 0 #000 !important}
 
     /* ---------- TOP SELLERS (.tcard) ---------- */
     .top-title{color:var(--text) !important;font-family:'Anton',sans-serif !important;text-transform:uppercase}

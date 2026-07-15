@@ -55,6 +55,20 @@
     </div>
     <!-- Footer End -->
 
+    <!-- Quick links -->
+    <div class="container-fluid footer" style="padding:0 0 34px">
+        <div class="container">
+            <div class="d-flex flex-wrap justify-content-center gap-2 gap-md-4" style="font-family:'Space Mono',monospace;text-transform:uppercase;font-size:12px;letter-spacing:.04em">
+                <a href="<?= BASE_PATH ?>index.php?act=giaodien" class="text-muted">Trang chủ</a>
+                <a href="<?= BASE_PATH ?>index.php?act=page&p=about" class="text-muted">Giới thiệu</a>
+                <a href="<?= BASE_PATH ?>index.php?act=page&p=policy" class="text-muted">Chính sách</a>
+                <a href="<?= BASE_PATH ?>index.php?act=page&p=faq" class="text-muted">FAQ</a>
+                <a href="<?= BASE_PATH ?>index.php?act=page&p=terms" class="text-muted">Điều khoản</a>
+                <a href="<?= BASE_PATH ?>index.php?act=page&p=contact" class="text-muted">Liên hệ</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Copyright Start -->
     <div class="container-fluid copyright py-4">
         <div class="container">

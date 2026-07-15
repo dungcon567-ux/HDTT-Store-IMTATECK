@@ -482,6 +482,28 @@ public function deleteProductSafe($productId) {
         return $stmt->execute();
     }
 
+    /** Lấy chi tiết biến thể theo danh sách id (dùng cho giỏ hàng khách vãng lai). */
+    public function getVariantsDetail(array $variantIds) {
+        $ids = array_values(array_unique(array_map('intval', $variantIds)));
+        if (empty($ids)) return [];
+        $in = implode(',', array_fill(0, count($ids), '?'));
+        $types = str_repeat('i', count($ids));
+        $sql = "SELECT pv.id AS variant_id, pv.image, pv.price, pv.stock,
+                       p.name AS product_name, c.name AS color_name, s.name AS size_name
+                FROM product_variants pv
+                JOIN products p ON pv.product_id = p.id
+                JOIN color c ON pv.color_id = c.id
+                JOIN size s ON pv.size_id = s.id
+                WHERE pv.id IN ($in) AND pv.status = 1";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param($types, ...$ids);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $rows = [];
+        while ($r = $res->fetch_assoc()) $rows[(int)$r['variant_id']] = $r;
+        return $rows;
+    }
+
     public function getCartItemsByIds($userId, $cartIds) {
     if (empty($cartIds)) {
         return [];
@@ -591,6 +613,36 @@ public function deleteProductSafe($productId) {
         $stmt->bind_param("s", $code);
         $stmt->execute();
         return $stmt->affected_rows === 1;
+    }
+
+    // ===== VOUCHER (quản trị) =====
+    public function getAllVouchers() {
+        $res = $this->conn->query("SELECT * FROM vouchers ORDER BY id DESC");
+        $rows = [];
+        while ($r = $res->fetch_assoc()) $rows[] = $r;
+        return $rows;
+    }
+    public function createVoucher($d) {
+        $maxd = ($d['max_discount'] ?? '') !== '' ? (int)$d['max_discount'] : null;
+        $exp  = !empty($d['expires_at']) ? (int)$d['expires_at'] : null;
+        $sql = "INSERT INTO vouchers (code,type,value,min_order,max_discount,quantity,expires_at,active)
+                VALUES (?,?,?,?,?,?,?,1)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssiiiii", $d['code'], $d['type'], $d['value'], $d['min_order'], $maxd, $d['quantity'], $exp);
+        return $stmt->execute();
+    }
+    public function voucherCodeExists($code) {
+        $stmt = $this->conn->prepare("SELECT id FROM vouchers WHERE code = ? LIMIT 1");
+        $stmt->bind_param("s", $code); $stmt->execute();
+        return (bool)$stmt->get_result()->fetch_assoc();
+    }
+    public function deleteVoucherById($id) {
+        $stmt = $this->conn->prepare("DELETE FROM vouchers WHERE id = ?");
+        $stmt->bind_param("i", $id); return $stmt->execute();
+    }
+    public function toggleVoucher($id) {
+        $stmt = $this->conn->prepare("UPDATE vouchers SET active = 1 - active WHERE id = ?");
+        $stmt->bind_param("i", $id); return $stmt->execute();
     }
 
     public function addOrderDetail($orderId, $variantId, $quantity, $price) {

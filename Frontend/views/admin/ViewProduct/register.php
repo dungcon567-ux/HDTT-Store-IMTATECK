@@ -98,6 +98,30 @@ $errors = $errors ?? [];
         .auth-footer a{color:var(--accent-2);text-decoration:none;font-weight:600}
         .auth-footer a:hover{text-decoration:underline}
     </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Brutalist override (đen + acid) ===== */
+        body{background:#000 !important;font-family:'Archivo',sans-serif !important}
+        body::before{background:
+            radial-gradient(700px 450px at 8% -10%, rgba(216,255,0,.10), transparent 60%),
+            radial-gradient(600px 450px at 100% 0%, rgba(216,255,0,.05), transparent 60%) !important}
+        .register-card{background:#0A0A0A !important;border:2px solid #3a3a3a !important;border-radius:0 !important;backdrop-filter:none !important}
+        .register-card::before{display:none !important}
+        .brand-mark{background:#D8FF00 !important;color:#000 !important;border-radius:0 !important;box-shadow:none !important;font-family:'Anton',sans-serif;font-weight:400}
+        .brand-name{font-family:'Anton',sans-serif;text-transform:uppercase}
+        .brand-sub{font-family:'Space Mono',monospace}
+        .auth-title{font-family:'Anton',sans-serif !important;text-transform:uppercase;font-weight:400;background:none !important;-webkit-text-fill-color:#F4F4F0 !important;color:#F4F4F0 !important}
+        .auth-sub,.lead{font-family:'Space Mono',monospace}
+        .field label{font-family:'Space Mono',monospace;color:#9A9A94 !important}
+        .ipt{background:#000 !important;border:2px solid #3a3a3a !important;border-radius:0 !important;font-family:'Archivo'}
+        .ipt:focus{border-color:#D8FF00 !important;box-shadow:4px 4px 0 #D8FF00 !important}
+        .btn-aurora{background:#D8FF00 !important;color:#000 !important;border-radius:0 !important;box-shadow:none !important;font-family:'Archivo';font-weight:800;text-transform:uppercase}
+        .btn-aurora:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 #000 !important;color:#000 !important}
+        .alert-soft{border-radius:0 !important}
+        .auth-footer{font-family:'Space Mono',monospace}
+        .auth-footer a{color:#D8FF00 !important}
+    </style>
 </head>
 <body>
 

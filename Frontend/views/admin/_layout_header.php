@@ -20,33 +20,33 @@ if (!function_exists('e_admin')) {
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         :root{
-            --bg-base:#070a16;
-            --bg-grain:#0b1024;
-            --surface:#111738;
-            --surface-2:#161e44;
-            --surface-elev:#1c2657;
-            --border:rgba(148,163,255,.10);
-            --border-2:rgba(148,163,255,.18);
-            --text:#e6e9f5;
-            --text-mut:#8a92b3;
-            --text-dim:#5b6388;
-            --accent:#7c5cff;     /* violet */
-            --accent-2:#22d3ee;   /* cyan */
-            --accent-3:#34d399;   /* mint */
-            --warn:#fbbf24;
-            --danger:#fb7185;
-            --pink:#f472b6;
-            --grad: linear-gradient(135deg,#7c5cff 0%, #22d3ee 100%);
-            --grad-2: linear-gradient(135deg,#f472b6 0%, #fbbf24 100%);
-            --grad-3: linear-gradient(135deg,#34d399 0%, #22d3ee 100%);
-            --grad-4: linear-gradient(135deg,#fb7185 0%, #7c5cff 100%);
+            --bg-base:#000000;
+            --bg-grain:#0a0a0a;
+            --surface:#0A0A0A;
+            --surface-2:#101010;
+            --surface-elev:#161616;
+            --border:#242424;
+            --border-2:#3a3a3a;
+            --text:#F4F4F0;
+            --text-mut:#9A9A94;
+            --text-dim:#6A6A64;
+            --accent:#D8FF00;     /* acid lime */
+            --accent-2:#D8FF00;
+            --accent-3:#8BE04A;   /* success green */
+            --warn:#FFC93C;
+            --danger:#FF4D4D;
+            --pink:#D8FF00;
+            --grad:#D8FF00;
+            --grad-2:#D8FF00;
+            --grad-3:#D8FF00;
+            --grad-4:#D8FF00;
         }
         *{box-sizing:border-box}
         html,body{height:100%}
@@ -397,6 +397,103 @@ if (!function_exists('e_admin')) {
             .stat-grid{grid-template-columns:1fr 1fr}
         }
     </style>
+
+    <!-- ===== STREETWEAR BRUTALIST override (black + acid, sharp, mono) ===== -->
+    <style>
+        body{font-family:'Archivo',system-ui,sans-serif !important}
+        body::before{background:
+            radial-gradient(700px 400px at 100% -5%, rgba(216,255,0,.06), transparent 60%),
+            radial-gradient(500px 400px at 0% 100%, rgba(216,255,0,.04), transparent 60%) !important}
+        body::after{background-image:
+            linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+            linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px) !important;background-size:52px 52px !important}
+
+        /* Bỏ bo góc + kính mờ toàn bộ */
+        .nav-rail,.brand-mark,.nav-item,.nav-item .pill,.user-chip,.avatar,.topbar,.topbar .search input,
+        .icon-btn,.page-badge,.surface,.stat,.stat .icon-tile,.btn-aurora,.btn-ghost,.pill,.field input,
+        .field textarea,.field select,.alert-soft,.thumb,.data-table select,.data-table input,
+        .data-table tbody td:first-child,.data-table tbody td:last-child{border-radius:0 !important}
+        .nav-rail,.topbar,.surface,.stat{backdrop-filter:none !important;-webkit-backdrop-filter:none !important}
+        .surface::before{display:none !important}
+
+        /* Sidebar */
+        .nav-rail{background:#000 !important;border-right:2px solid var(--border-2) !important}
+        .brand-mark{background:var(--accent) !important;color:#000 !important;box-shadow:none !important;font-family:'Anton',sans-serif;font-weight:400}
+        .brand-name{font-family:'Anton',sans-serif;letter-spacing:.02em;text-transform:uppercase;font-weight:400}
+        .brand-sub{font-family:'Space Mono',monospace}
+        .nav-section{font-family:'Space Mono',monospace}
+        .nav-item{font-family:'Archivo';font-weight:600;border:2px solid transparent}
+        .nav-item i{font-size:16px}
+        .nav-item:hover{background:#0A0A0A !important;color:var(--text) !important}
+        .nav-item.active{background:#0A0A0A !important;color:var(--accent) !important;border:2px solid var(--accent) !important;box-shadow:none !important}
+        .nav-item.active::before{background:var(--accent) !important;left:-18px;border-radius:0 !important}
+        .user-chip{background:#0A0A0A !important;border:2px solid var(--border) !important}
+        .avatar{background:var(--accent) !important;color:#000 !important;font-family:'Anton',sans-serif;font-weight:400}
+
+        /* Topbar */
+        .topbar{background:#000 !important;border:2px solid var(--border-2) !important}
+        .crumb{font-family:'Space Mono',monospace}
+        .crumb .now{color:var(--accent)}
+        .topbar .search input{background:#0A0A0A !important;border:2px solid var(--border-2) !important;font-family:'Space Mono',monospace}
+        .topbar .search input:focus{border-color:var(--accent) !important;box-shadow:4px 4px 0 var(--accent) !important}
+        .icon-btn{background:#0A0A0A !important;border:2px solid var(--border-2) !important}
+        .icon-btn:hover{border-color:var(--accent) !important;color:var(--accent) !important;transform:none}
+
+        /* Page header */
+        .page-title{font-family:'Anton',sans-serif !important;font-weight:400 !important;background:none !important;-webkit-text-fill-color:var(--text) !important;color:var(--text) !important;text-transform:uppercase;letter-spacing:0}
+        .page-sub{font-family:'Space Mono',monospace}
+        .page-badge{background:var(--accent) !important;color:#000 !important;border:0 !important;font-family:'Space Mono',monospace}
+        .page-badge i{color:#000 !important}
+
+        /* Surface / cards */
+        .surface{background:#0A0A0A !important;border:2px solid var(--border) !important}
+
+        /* Stat tiles */
+        .stat{background:#0A0A0A !important;border:2px solid var(--border) !important;transition:transform .12s,box-shadow .12s,border-color .12s}
+        .stat:hover{transform:translate(-4px,-4px);border-color:var(--accent) !important;box-shadow:8px 8px 0 var(--accent) !important}
+        .stat .label{font-family:'Space Mono',monospace}
+        .stat .value{font-family:'Anton',sans-serif;font-weight:400;letter-spacing:0}
+        .stat .delta{color:var(--accent-3);font-family:'Space Mono',monospace}
+        .stat .icon-tile{color:#000 !important;box-shadow:none !important}
+        .stat .icon-tile.g1,.stat .icon-tile.g2,.stat .icon-tile.g3,.stat .icon-tile.g4{background:var(--accent) !important}
+        .stat .glow{display:none !important}
+
+        /* Data table */
+        .data-table thead th{font-family:'Space Mono',monospace;color:var(--accent) !important;border-bottom:2px solid var(--border-2) !important}
+        .data-table tbody tr{background:#0A0A0A !important}
+        .data-table tbody td{border-top:2px solid var(--border) !important;border-bottom:2px solid var(--border) !important}
+        .data-table tbody td:first-child{border-left:2px solid var(--border) !important}
+        .data-table tbody td:last-child{border-right:2px solid var(--border) !important}
+        .data-table tbody tr:hover{background:#141414 !important}
+        .data-table tbody tr:hover td{border-color:var(--accent) !important}
+
+        /* Buttons */
+        .btn-aurora{background:var(--accent) !important;color:#000 !important;box-shadow:none !important;font-family:'Archivo';font-weight:800;text-transform:uppercase;letter-spacing:.04em;border:2px solid var(--accent) !important}
+        .btn-aurora:hover{transform:translate(-2px,-2px);box-shadow:4px 4px 0 #000 !important;color:#000 !important}
+        .btn-ghost{background:transparent !important;border:2px solid var(--border-2) !important;font-family:'Archivo';font-weight:700;text-transform:uppercase}
+        .btn-ghost:hover{background:#0A0A0A !important;border-color:var(--accent) !important;color:var(--accent) !important}
+        .btn-ghost.danger:hover{border-color:var(--danger) !important;color:var(--danger) !important;background:#0A0A0A !important}
+        .btn-ghost.warn:hover{border-color:var(--warn) !important;color:var(--warn) !important;background:#0A0A0A !important}
+        .btn-ghost.info:hover{border-color:var(--accent-2) !important;color:var(--accent-2) !important;background:#0A0A0A !important}
+
+        /* Pills (giữ màu trạng thái, chữ mono) */
+        .pill{font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.03em}
+        .pill.violet{color:var(--accent) !important;background:rgba(216,255,0,.1) !important;border-color:rgba(216,255,0,.35) !important}
+
+        /* Forms */
+        .field label{font-family:'Space Mono',monospace}
+        .field input,.field textarea,.field select{background:#0A0A0A !important;border:2px solid var(--border-2) !important;font-family:'Archivo'}
+        .field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent) !important;box-shadow:4px 4px 0 var(--accent) !important}
+
+        /* Misc */
+        .mono{font-family:'Space Mono',monospace !important}
+        .data-table select,.data-table input{background:#0A0A0A !important;border:2px solid var(--border-2) !important}
+        .bar-row .bar{background:#141414 !important}
+        .bar-row .bar>span{background:var(--accent) !important}
+        .thumb{border:2px solid var(--border-2) !important}
+        .alert-soft{border-radius:0 !important}
+        .empty-box i{color:var(--text-dim)}
+    </style>
 </head>
 <body>
 
@@ -424,6 +521,11 @@ if (!function_exists('e_admin')) {
         </a>
         <a href="?act=CateProduct" class="nav-item <?= $activeMenu==='variant'?'active':'' ?>">
             <i class="bi bi-stack"></i> Biến thể
+        </a>
+
+        <div class="nav-section">Marketing</div>
+        <a href="?act=vouchers" class="nav-item <?= $activeMenu==='voucher'?'active':'' ?>">
+            <i class="bi bi-ticket-perforated"></i> Mã giảm giá
         </a>
 
         <div class="nav-section">Vận hành</div>

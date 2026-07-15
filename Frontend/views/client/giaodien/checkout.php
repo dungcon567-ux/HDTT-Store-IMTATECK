@@ -72,6 +72,25 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
                     <div class="card-body p-4">
                         <h4 class="mb-3">Thông tin nhận hàng</h4>
 
+                        <?php if (!empty($addresses)): ?>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-address-book me-1" style="color:var(--accent)"></i> Chọn địa chỉ đã lưu</label>
+                            <select class="form-control rounded-pill" id="savedAddrSelect" onchange="fillSavedAddr(this)">
+                                <option value="">— Nhập địa chỉ mới —</option>
+                                <?php foreach ($addresses as $a): ?>
+                                    <option value="<?= (int)$a['id'] ?>"
+                                        data-name="<?= htmlspecialchars($a['receiver_name']) ?>"
+                                        data-phone="<?= htmlspecialchars($a['receiver_phone']) ?>"
+                                        data-addr="<?= htmlspecialchars($a['address']) ?>"
+                                        <?= (int)$a['is_default'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($a['receiver_name']) ?> · <?= htmlspecialchars($a['receiver_phone']) ?> · <?= htmlspecialchars(mb_strimwidth($a['address'],0,40,'…')) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <small class="text-muted">Quản lý địa chỉ trong <a href="<?= BASE_PATH ?>index.php?act=profile#addresses" style="color:var(--accent)">Sổ địa chỉ</a>.</small>
+                        </div>
+                        <?php endif; ?>
+
                         <div class="mb-3">
                             <label class="form-label fw-bold">Họ tên người nhận</label>
                             <input type="text" name="receiver_name" class="form-control rounded-pill"
@@ -214,5 +233,25 @@ $selectedMethod = $_POST['payment_method'] ?? 'cod';
     .pay-card input:checked + .pay-logo + .pay-info + .pay-check{background:var(--accent) !important;border-color:var(--accent) !important}
     .badge-demo{background:rgba(251,191,36,.16) !important;color:#FCD34D !important}
 </style>
+
+<script>
+    function fillSavedAddr(sel){
+        var opt = sel.options[sel.selectedIndex];
+        var form = sel.closest('form');
+        if (!form) return;
+        var addr = opt && opt.value ? opt.dataset.addr : '';
+        if (opt && opt.value) {
+            var n = form.querySelector('[name="receiver_name"]');  if (n) n.value = opt.dataset.name;
+            var p = form.querySelector('[name="receiver_phone"]'); if (p) p.value = opt.dataset.phone;
+        }
+        var a = form.querySelector('.addr-final');           if (a) a.value = addr;
+        var pv = form.querySelector('.addr-preview-text');   if (pv) pv.textContent = addr;
+    }
+    // Tự điền địa chỉ mặc định khi mở trang
+    window.addEventListener('load', function(){
+        var sel = document.getElementById('savedAddrSelect');
+        if (sel && sel.value) fillSavedAddr(sel);
+    });
+</script>
 
 <?php require_once __DIR__ . '/_footer.php'; ?>

@@ -248,6 +248,7 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
                 <ul class="nav nav-pills-pro" role="tablist">
                     <li class="nav-item"><a class="nav-link active" data-bs-toggle="pill" href="#tab-info"><i class="fas fa-id-card me-1"></i> Thông tin</a></li>
                     <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tab-pass"><i class="fas fa-lock me-1"></i> Đổi mật khẩu</a></li>
+                    <li class="nav-item"><a class="nav-link" data-bs-toggle="pill" href="#tab-addr"><i class="fas fa-map-marker-alt me-1"></i> Sổ địa chỉ</a></li>
                 </ul>
 
                 <div class="tab-content">
@@ -325,6 +326,56 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
                             </form>
                         </div>
                     </div>
+
+                    <div id="tab-addr" class="tab-pane fade">
+                        <div class="pro-card" id="addresses">
+                            <h4>Sổ địa chỉ</h4>
+                            <p class="sub">Lưu địa chỉ để đặt hàng nhanh hơn</p>
+
+                            <?php if (!empty($addresses)): ?>
+                                <div class="addr-list">
+                                    <?php foreach ($addresses as $a): ?>
+                                        <div class="addr-item <?= (int)$a['is_default'] ? 'is-default' : '' ?>">
+                                            <div class="addr-item-body">
+                                                <div class="addr-name">
+                                                    <?= htmlspecialchars($a['receiver_name']) ?>
+                                                    <span class="addr-phone"><?= htmlspecialchars($a['receiver_phone']) ?></span>
+                                                    <?php if ((int)$a['is_default']): ?><span class="addr-badge">Mặc định</span><?php endif; ?>
+                                                </div>
+                                                <div class="addr-text"><?= htmlspecialchars($a['address']) ?></div>
+                                            </div>
+                                            <div class="addr-actions">
+                                                <?php if (!(int)$a['is_default']): ?>
+                                                    <a href="<?= BASE_PATH ?>index.php?act=setDefaultAddress&id=<?= (int)$a['id'] ?>" class="addr-btn">Đặt mặc định</a>
+                                                <?php endif; ?>
+                                                <a href="<?= BASE_PATH ?>index.php?act=deleteAddress&id=<?= (int)$a['id'] ?>" class="addr-btn danger"
+                                                   onclick="return confirm('Xoá địa chỉ này?')"><i class="fas fa-trash"></i></a>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php else: ?>
+                                <p class="sub" style="opacity:.7">Bạn chưa lưu địa chỉ nào.</p>
+                            <?php endif; ?>
+
+                            <h4 style="font-size:15px;margin-top:24px">Thêm địa chỉ mới</h4>
+                            <form method="POST" action="<?= BASE_PATH ?>index.php?act=addAddress">
+                                <?= csrf_field() ?>
+                                <div class="form-row mb-3">
+                                    <div><label class="form-label-strong">Họ tên người nhận</label>
+                                        <input type="text" name="receiver_name" class="form-control-pro" required></div>
+                                    <div><label class="form-label-strong">Số điện thoại</label>
+                                        <input type="text" name="receiver_phone" class="form-control-pro" pattern="[0-9]{9,11}" required></div>
+                                </div>
+                                <div class="mb-3"><label class="form-label-strong">Địa chỉ</label>
+                                    <input type="text" name="address" class="form-control-pro" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành" required></div>
+                                <label style="display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;margin-bottom:14px">
+                                    <input type="checkbox" name="is_default" value="1"> Đặt làm địa chỉ mặc định
+                                </label>
+                                <button type="submit" class="btn-grad"><i class="fas fa-plus me-2"></i>Thêm địa chỉ</button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -334,6 +385,17 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
 <!-- Dark Premium overrides for profile -->
 <style>
     .profile-wrap{background:transparent !important}
+    .profile-cover{background:#0A0A0A !important;border:2px solid var(--border-2) !important;border-radius:0 !important}
+    .profile-cover::before,.profile-cover::after{opacity:.4}
+    .profile-cover h1{font-family:'Anton',sans-serif !important;text-transform:uppercase;color:#fff !important}
+    .profile-cover p{color:var(--text-2) !important;font-family:'Space Mono',monospace}
+    .avatar-wrap{background:var(--accent) !important;border-radius:0 !important}
+    .avatar-img{background:#000 !important;color:var(--accent) !important;border-radius:0 !important;font-family:'Anton',sans-serif}
+    .avatar-edit{background:var(--accent) !important;color:#000 !important;border-radius:0 !important;border:2px solid #000 !important}
+    .profile-name{font-family:'Anton',sans-serif !important;text-transform:uppercase}
+    .profile-role{background:var(--accent) !important;color:#000 !important;border-radius:0 !important;font-family:'Space Mono',monospace}
+    .profile-role.admin{background:var(--accent) !important;color:#000 !important}
+    .avatar-card{border-radius:0 !important}
     .avatar-card,.pro-card{background:var(--surface) !important;border:1px solid var(--border) !important;box-shadow:var(--sh) !important;backdrop-filter:blur(12px)}
     .avatar-img{background:var(--bg-2) !important}
     .profile-name{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
@@ -346,6 +408,21 @@ $initial = strtoupper(mb_substr($user['username'], 0, 1));
     .nav-pills-pro .nav-link.active{background:var(--bg-2) !important;color:#fff !important;box-shadow:0 4px 14px rgba(216,255,0,.25) !important}
     .pro-card h4{color:var(--text) !important;font-family:'Archivo',sans-serif !important}
     .pro-card .sub{color:var(--text-3) !important}
+    /* Sổ địa chỉ */
+    .addr-list{display:flex;flex-direction:column;gap:10px;margin-bottom:8px}
+    .addr-item{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;
+        background:var(--surface-2);border:2px solid var(--border-2);padding:14px 16px}
+    .addr-item.is-default{border-color:var(--border-glow)}
+    .addr-name{font-family:'Archivo';font-weight:800;color:var(--text);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .addr-phone{font-family:'Space Mono',monospace;font-weight:400;color:var(--text-3);font-size:13px}
+    .addr-badge{background:var(--accent);color:#000;font-family:'Space Mono',monospace;font-size:10.5px;font-weight:700;
+        text-transform:uppercase;padding:2px 8px;letter-spacing:.04em}
+    .addr-text{color:var(--text-2);font-size:14px;margin-top:4px}
+    .addr-actions{display:flex;gap:8px;flex-shrink:0}
+    .addr-btn{font-family:'Space Mono',monospace;font-size:12px;text-transform:uppercase;color:var(--text-2);
+        border:2px solid var(--border-2);padding:6px 12px;white-space:nowrap;transition:all .12s}
+    .addr-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .addr-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
     .form-label-strong{color:var(--text-2) !important}
     .form-control-pro{background:var(--surface-2) !important;border:1.5px solid var(--border-2) !important;color:var(--text) !important}
     .form-control-pro:focus{border-color:var(--accent) !important;box-shadow:0 0 0 3px rgba(216,255,0,.2) !important}

@@ -60,6 +60,18 @@ switch ($act) {
         (new HomeController())->registerUser();
         break;
 
+    case 'page':
+        (new HomeController())->page();
+        break;
+
+    case 'contactSend':
+        (new HomeController())->contactSend();
+        break;
+
+    case 'subscribe':
+        (new HomeController())->subscribe();
+        break;
+
     case 'forgotPassword':
         (new HomeController())->forgotPassword();
         break;
@@ -122,6 +134,18 @@ switch ($act) {
 
     case 'profile':
         (new HomeController())->profile();
+        break;
+
+    case 'addAddress':
+        (new HomeController())->addAddress();
+        break;
+
+    case 'deleteAddress':
+        (new HomeController())->deleteAddress();
+        break;
+
+    case 'setDefaultAddress':
+        (new HomeController())->setDefaultAddress();
         break;
 
     case 'wishlist':
@@ -237,12 +261,28 @@ switch ($act) {
         (new HomeController())->orderDetail();
         break;
 
+    case 'invoice':
+        (new HomeController())->invoice();
+        break;
+
     case 'detailOrder':
         (new admincontroller())->detailOrder();
         break;
 
     case 'thongke':
         (new admincontroller())->thongke();
+        break;
+
+    case 'vouchers':
+        (new admincontroller())->vouchers();
+        break;
+
+    case 'deleteVoucher':
+        (new admincontroller())->deleteVoucher();
+        break;
+
+    case 'toggleVoucher':
+        (new admincontroller())->toggleVoucher();
         break;
     default:
         http_response_code(404);
