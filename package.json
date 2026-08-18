@@ -1,0 +1,19 @@
+{
+  "name": "hdtt-store",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HDTT Store - website ban quan ao (PHP thuan, mo hinh MVC)",
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "start": "node scripts/dev.js",
+    "serve": "php artisan serve",
+    "migrate": "php artisan migrate",
+    "migrate:fresh": "php artisan migrate:fresh",
+    "seed": "php artisan db:seed",
+    "routes": "php artisan route:list",
+    "db:status": "php artisan db:status"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

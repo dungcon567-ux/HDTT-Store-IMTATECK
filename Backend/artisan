@@ -1,0 +1,22 @@
+<?php
+/**
+ * Chuyển tiếp `php artisan ...` từ thư mục Backend về file artisan thật
+ * ở thư mục gốc dự án, để chạy ở đâu cũng được.
+ */
+
+if (PHP_SAPI !== 'cli') {
+    http_response_code(404);
+    exit;
+}
+
+$root = dirname(__DIR__);
+$args = array_slice($_SERVER['argv'], 1);
+
+$cmd = escapeshellarg(PHP_BINARY) . ' ' . escapeshellarg($root . '/artisan');
+foreach ($args as $a) {
+    $cmd .= ' ' . escapeshellarg($a);
+}
+
+chdir($root);
+passthru($cmd, $exitCode);
+exit($exitCode);
